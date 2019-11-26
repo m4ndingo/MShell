@@ -7,10 +7,14 @@ namespace testsc
     class Core
     {
         // commands
-        private Dictionary<string, CoreCommand> core_commands = null;
+        static public Dictionary<string, CoreCommand> core_commands = null;
         // dictionaries
         static public Dictionary<string, string> settings = new Dictionary<string, string>();
+        static public Dictionary<string, string> aliases = new Dictionary<string, string>();
+        // preloaded commands
         static public settingCommand settingsManager = new settingCommand();
+        static public aliasCommand aliasManager = new aliasCommand();
+        static public helpCommand helpManager = new helpCommand();
         public void cmds(string prompt_cmds)
         {
             
@@ -51,7 +55,7 @@ namespace testsc
                 return null;
             }
             // load command
-            CoreCommand cmd = this.core_commands[kCmd.Key];
+            CoreCommand cmd = Core.core_commands[kCmd.Key];
             // prepare context
             cmd.cmd_with_args       = cmd_with_args;
             cmd.cmd_without_args    = kCmd.Key;
@@ -62,19 +66,22 @@ namespace testsc
             return cmd;
         }
 
-        private bool isValidCommand(string cmd)
+        static public bool isValidCommand(string cmd)
         {
             if (core_commands == null)
                 LoadValidCommds();
             return core_commands != null && core_commands.ContainsKey(cmd);
         }
 
-        private void LoadValidCommds()
+        static private void LoadValidCommds()
         {
             core_commands = new Dictionary<string, CoreCommand>();
-            core_commands.Add("q", new aliasCommand());
+            core_commands.Add("q", aliasManager);
+            core_commands.Add("alias", aliasManager);
             core_commands.Add("loop", settingsManager);
             core_commands.Add("echo", new echoCommand());
+            core_commands.Add("help", helpManager);
+            core_commands.Add("?", helpManager);
         }
 
         public KeyValuePair<string, string> getCmdArgs(string cmd_with_args)

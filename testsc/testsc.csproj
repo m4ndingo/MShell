@@ -47,6 +47,7 @@
     <Compile Include="Core.cs" />
     <Compile Include="CoreCommands.cs" />
     <Compile Include="echoCommand.cs" />
+    <Compile Include="helpCommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Prompt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

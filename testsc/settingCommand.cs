@@ -43,5 +43,11 @@ namespace testsc
             }
             Core.settings[name] = value;
         }
+        public override string Help(params string[] help_args)
+        {
+            string name = help_args[0];
+            string help = string.Format("I'm the settings command. Type \"{0}\" for reading this variable, \"{0} [value]\" to change its value", name);
+            return help;
+        }
     }
 }
