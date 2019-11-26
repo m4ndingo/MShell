@@ -10,21 +10,57 @@ namespace testsc
     {
         public settingCommand()
         {
-            LoadSettings();
+            if (Core.aliases.Count.Equals(0))
+                LoadSettings();
         }
         public override void Run()
         {
-            //ConsoleWrite("Run(): settingCommand : CoreCommand - Running: {0}", this.cmd_with_args);
-            LoadSettings();
-            if (isValidSetting(this.cmd_without_args).Equals(false))
+            //ConsoleWrite("Run(): settingCommand : CoreCommand - Running: {0}", this.cmd_with_args);            
+            if (this.cmd_without_args.Equals("set"))
             {
-                ConsoleWrite("Run(): settingCommand : CoreCommand - Invalid Setting");
-                return;
+                if (this.args.Contains(" "))
+                    AddSetting();
+                else
+                    DumpSettings();
             }
-
-            UpdateSetting(this.cmd_without_args, this.args);
+            else
+            {
+                if (isValidSetting(this.cmd_without_args).Equals(false))
+                {
+                    ConsoleWrite("Run(): settingCommand : CoreCommand - Invalid Setting");
+                    return;
+                }
+                UpdateSetting(this.cmd_without_args, this.args);
+            }
             this.result_type = RESULT_TYPE.NONE;
         }
+
+        private void AddSetting()
+        {
+            string[] args = this.args.Split(' ');
+            string setting = args[0];
+            string value = string.Join(" ", args.Skip(1));
+            Core.settings[setting] = value;
+            Core.core_commands[setting] = Core.settingsManager;
+        }
+        private void DumpSettings()
+        {
+            if (args.Length > 0)
+            {
+                if (Core.settings.ContainsKey(args).Equals(false))
+                {
+                    ConsoleWrite("DumpSettings(): Setting \"{0}\" not found", args);
+                    return;
+                }
+                ConsoleWrite("{0};{1}", args, Core.settings[args]);
+                return;
+            }
+            foreach (KeyValuePair<string, string> setting in Core.settings)
+            {
+                ConsoleWrite("{0};{1}", setting.Key, setting.Value);
+            }
+        }
+
         private bool isValidSetting(string key)
         {
             return Core.settings.ContainsKey(key);
@@ -46,7 +82,15 @@ namespace testsc
         public override string Help(params string[] help_args)
         {
             string name = help_args[0];
-            string help = string.Format("I'm the settings command. Type \"{0}\" for reading this variable, \"{0} [value]\" to change its value", name);
+            string help = string.Format("I'm the settings command. Type \"{0}\" for reading", name);
+            if (Core.settings.ContainsKey(name))
+            {
+                help += string.Format(" or \"{0} [value]\" to change its value", name);
+                help += string.Format(". Current value is \"{0}\"", Core.settings[name]);
+            }else
+            {
+                help += string.Format(" or \"{0} [setting] [value]\" to add a new setting", name);
+            }
             return help;
         }
     }

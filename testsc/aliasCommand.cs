@@ -1,19 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace testsc
 {
     class aliasCommand : CoreCommand
-    {        
+    {
+        public aliasCommand()
+        {
+            if (Core.aliases.Count.Equals(0))
+                LoadAliases();
+        }
         public override void Run()
         {
             //ConsoleWrite("Run(): aliasCommand : CoreCommand - Running: {0}", this.cmd_with_args);
-            LoadAliases();
             if(isValidAlias(this.cmd_without_args).Equals(false))
             {
                 if (this.cmd_without_args.Equals("alias"))
                 {
-                    DumpAliases();
+                    if (this.args.Contains(" "))
+                        AddAlias();
+                    else
+                        DumpAliases();
                 }
                 else
                 {
@@ -26,13 +34,22 @@ namespace testsc
             this.result_type = RESULT_TYPE.COMMANDS;
         }
 
+        private void AddAlias()
+        {
+            string[] args = this.args.Split(' ');
+            string alias = args[0];
+            string commands = string.Join(" ", args.Skip(1));
+            Core.aliases[alias] = commands;
+            Core.core_commands[alias] = Core.aliasManager;
+        }
+
         private void DumpAliases()
         {
             if (args.Length > 0)
             {
                 if(Core.aliases.ContainsKey(args).Equals(false))
                 {
-                    ConsoleWrite("DumpAliases(): Alias {0} not found", args);
+                    ConsoleWrite("DumpAliases(): Alias \"{0}\" not found", args);
                     return;
                 }
                 ConsoleWrite("{0};{1}", args, Core.aliases[args]);
@@ -59,11 +76,11 @@ namespace testsc
             string name = help_args[0];
             if (name.Equals("alias"))
             {
-                return "I'm the alias command. Try: alias or alias [name]";
+                return "I'm the alias command. Try: alias or alias [name] or alias [newalias] [commands]";
             }
             if (Core.aliases.Count.Equals(0))
                 LoadAliases();
-            return string.Format("alias '{0}' value '{1}'", name, Core.aliases[name]);
+            return string.Format("Alias '{0}' current value '{1}'", name, Core.aliases[name]);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace testsc
             }
             foreach (KeyValuePair<string, CoreCommand> alias in Core.core_commands)
             {
-                ConsoleWrite("{0}", alias.Key);
+                ConsoleWrite("{0}\t{1}", alias.Key, alias.Value.Help(alias.Key));
             }
         }
         public override string Help(params string[] help_args)

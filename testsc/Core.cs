@@ -15,6 +15,9 @@ namespace testsc
         static public settingCommand settingsManager = new settingCommand();
         static public aliasCommand aliasManager = new aliasCommand();
         static public helpCommand helpManager = new helpCommand();
+        //
+        static public string last_message = "";
+        static public bool silent = false;
         public void cmds(string prompt_cmds)
         {
             
@@ -25,20 +28,30 @@ namespace testsc
         {
             if (prompt_cmds == null)
                 return;
-            foreach (string cmd_with_args in prompt_cmds.Split(';')) 
+            foreach (string cmd_with_args_and_pipes in prompt_cmds.Split(';'))          // cmd1;cmd2|cmd3
             {
-                CoreCommand cmd = ParseCmd(cmd_with_args);
-                if (cmd == null)
-                    continue;
-                if (cmd.result_type.Equals(CoreCommand.RESULT_TYPE.COMMANDS) || cmd.result_type.Equals(CoreCommand.RESULT_TYPE.NONE))
+                bool isPipe = false;
+                string[] cmd_with_args_pipeables = cmd_with_args_and_pipes.Split('|');
+                silent = cmd_with_args_pipeables.Length > 1;
+                for (int i = 0; i < cmd_with_args_pipeables.Length; i++) 
                 {
-                    ParseTypedCmds(cmd.results);
-                }
-                else if (cmd.results != null) 
-                {
-                    CoreCommand.ConsoleWrite("Results: '{0}' Type: {1}", cmd.results, cmd.result_type.ToString());
+                    string cmd_with_args = cmd_with_args_pipeables[i];
+                    if (i == cmd_with_args_pipeables.Length - 1) silent = false;
+                    CoreCommand cmd = ParseCmd(cmd_with_args, isPipe);
+                    if (cmd == null)
+                        continue;
+                    if (cmd.result_type.Equals(CoreCommand.RESULT_TYPE.COMMANDS) || cmd.result_type.Equals(CoreCommand.RESULT_TYPE.NONE))
+                    {
+                        ParseTypedCmds(cmd.results);
+                    }
+                    else if (cmd.results != null) 
+                    {
+                        CoreCommand.ConsoleWrite("Results: '{0}' Type: {1}", cmd.results, cmd.result_type.ToString());
+                    }
+                    isPipe = true;
                 }
             }
+            Core.last_message = "";
         }
 
         public string readSetting(string name, string def = null)
@@ -46,7 +59,7 @@ namespace testsc
             return settings.ContainsKey(name) ? settings[name] : def;
         }
 
-        private CoreCommand ParseCmd(string cmd_with_args)
+        private CoreCommand ParseCmd(string cmd_with_args, bool isPipe = false)
         {
             KeyValuePair<string, string> kCmd = getCmdArgs(cmd_with_args);
             if (isValidCommand(kCmd.Key).Equals(false))
@@ -60,6 +73,11 @@ namespace testsc
             cmd.cmd_with_args       = cmd_with_args;
             cmd.cmd_without_args    = kCmd.Key;
             cmd.args                = kCmd.Value;
+            cmd.isPipe              = isPipe;
+            cmd.last_message        = last_message;
+
+            last_message            = "";      // clear last_write/last_message used between pipes
+
             // execute command
             cmd.Run();
 
@@ -78,8 +96,10 @@ namespace testsc
             core_commands = new Dictionary<string, CoreCommand>();
             core_commands.Add("q", aliasManager);
             core_commands.Add("alias", aliasManager);
+            core_commands.Add("set", settingsManager);
             core_commands.Add("loop", settingsManager);
             core_commands.Add("echo", new echoCommand());
+            core_commands.Add("nl", new nlCommand());
             core_commands.Add("help", helpManager);
             core_commands.Add("?", helpManager);
         }
