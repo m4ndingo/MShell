@@ -26,8 +26,8 @@ namespace testsc
         }
         private void refreshVars()
         {
-            this.loop = core.readSetting("loop", "0").Equals("1");
-            this.PS1 = core.readSetting("PS1", this.PS1);
+            this.loop = Core.readSetting("loop", "0").Equals("1");
+            this.PS1 = Core.readSetting("PS1", this.PS1);
         }
     }
 }

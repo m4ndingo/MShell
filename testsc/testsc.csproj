@@ -44,16 +44,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="aliasCommand.cs" />
+    <Compile Include="catCommand.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="CoreCommands.cs" />
     <Compile Include="echoCommand.cs" />
     <Compile Include="execCommand.cs" />
+    <Compile Include="grepCmd.cs" />
     <Compile Include="helpCommand.cs" />
+    <Compile Include="lsCommand.cs" />
     <Compile Include="nlCommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Prompt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="settingCommand.cs" />
+    <Compile Include="wcCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

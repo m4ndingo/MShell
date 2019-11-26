@@ -39,11 +39,11 @@ namespace testsc
                     CoreCommand cmd = ParseCmd(cmd_with_args, isPipe);
                     if (cmd == null)
                         continue;
-                    if (cmd.result_type.Equals(CoreCommand.RESULT_TYPE.COMMANDS) || cmd.result_type.Equals(CoreCommand.RESULT_TYPE.NONE))
+                    if (cmd.result_type.Equals(CoreCommand.RESULT_TYPE.COMMANDS)/* || cmd.result_type.Equals(CoreCommand.RESULT_TYPE.NONE)*/)
                     {
                         ParseTypedCmds(cmd.results);
                     }
-                    else if (cmd.results != null) 
+                    else if (cmd.results != null && cmd.result_type.Equals(CoreCommand.RESULT_TYPE.NONE).Equals(false)) 
                     {
                         CoreCommand.ConsoleWrite("Results: '{0}' Type: {1}", cmd.results, cmd.result_type.ToString());
                     }
@@ -53,7 +53,7 @@ namespace testsc
             Core.last_message = "";
         }
 
-        public string readSetting(string name, string def = null)
+        static public string readSetting(string name, string def = null)
         {
             return settings.ContainsKey(name) ? settings[name] : def;
         }
@@ -93,16 +93,20 @@ namespace testsc
         static private void LoadValidCommds()
         {
             core_commands = new Dictionary<string, CoreCommand>();
-            core_commands.Add("q", aliasManager);
+            core_commands.Add("help", helpManager);
+            core_commands.Add("ls", new lsCommand());
+            core_commands.Add("cat", new catCommand());
+            core_commands.Add("grep", new grepCommand());
             core_commands.Add("alias", aliasManager);
             core_commands.Add("set", settingsManager);
             core_commands.Add("loop", settingsManager);
             core_commands.Add("echo", new echoCommand());
             core_commands.Add("nl", new nlCommand());
+            core_commands.Add("wc", new wcCommand());
             core_commands.Add("exec", new execCommand());
             core_commands.Add("PS1", settingsManager);
-            core_commands.Add("help", helpManager);
             core_commands.Add("?", helpManager);
+            core_commands.Add("q", aliasManager);
         }
 
         static public KeyValuePair<string, string> getCmdArgs(string cmd_with_args)

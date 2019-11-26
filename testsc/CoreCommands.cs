@@ -31,7 +31,7 @@ namespace testsc
         }
         public static void ConsoleWrite(string message, params string[] args)
         {
-            string output = string.Format(message, args);
+            string output = args.Length > 0 ? string.Format(message, args) : message;
             if (Core.silent.Equals(false))
                 Console.WriteLine(output);
             Core.last_message += Core.last_message.Length == 0 ? output : '\n' + output;

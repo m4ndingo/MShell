@@ -27,6 +27,7 @@ namespace testsc
                 {
                     ConsoleWrite("Run(): aliasCommand : CoreCommand - Invalid Alias '{0}'", this.cmd_without_args);
                 }
+                this.result_type = RESULT_TYPE.NONE;
                 return;
             }
 
@@ -59,6 +60,7 @@ namespace testsc
             {
                 ConsoleWrite("{0};{1}", alias.Key, alias.Value);
             }
+            
         }
 
         private bool isValidAlias(string key)
