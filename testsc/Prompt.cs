@@ -12,16 +12,22 @@ namespace testsc
         {
             this.PS1 = string.IsNullOrEmpty(newPS1) ? PS1 : newPS1;
             this.core = core;
+            refreshVars();
         }
         public IEnumerable<string> doLoop()
-        {
-            while(this.loop)
+        {            
+            while (this.loop)
             {
                 Console.Write(this.PS1);
                 yield return Console.ReadLine();
-                this.loop = core.readSetting("loop", "0").Equals("1");
+                refreshVars();
             }
             yield return null;
+        }
+        private void refreshVars()
+        {
+            this.loop = core.readSetting("loop", "0").Equals("1");
+            this.PS1 = core.readSetting("PS1", this.PS1);
         }
     }
 }

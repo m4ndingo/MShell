@@ -69,6 +69,7 @@ namespace testsc
         {
             Core.settings.Clear();
             Core.settings.Add("loop", "1");
+            Core.settings.Add("PS1", "$ ");
         }
         private void UpdateSetting(string name, string value)
         {
@@ -82,14 +83,11 @@ namespace testsc
         public override string Help(params string[] help_args)
         {
             string name = help_args[0];
-            string help = string.Format("I'm the settings command. Type \"{0}\" for reading", name);
+            string help= string.Format("I'm the settings command. Type \"{0}\" for reading or \"{0} [setting] [value]\" to add a new setting", name); 
             if (Core.settings.ContainsKey(name))
             {
-                help += string.Format(" or \"{0} [value]\" to change its value", name);
+                help = string.Format("Setting \"{0}\". Try \"{0} [value]\" to change its value", name);
                 help += string.Format(". Current value is \"{0}\"", Core.settings[name]);
-            }else
-            {
-                help += string.Format(" or \"{0} [setting] [value]\" to add a new setting", name);
             }
             return help;
         }

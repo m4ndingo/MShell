@@ -10,16 +10,16 @@ namespace testsc
             {
                 if (Core.isValidCommand(args))
                 {
-                    ConsoleWrite("'{0}' help:\n{1}", args, Core.core_commands[args].Help(args));
+                    ConsoleWrite("'{0}' help: {1} {2}", args, Core.core_commands[args].Help(args), Core.core_commands[args].isPipe ? "isPipe: True" : "");
                 }else
                 {
                     ConsoleWrite("helpCommand: unknown command '{0}'", args);
                 }
                 return;
             }
-            foreach (KeyValuePair<string, CoreCommand> alias in Core.core_commands)
+            foreach (KeyValuePair<string, CoreCommand> command in Core.core_commands)
             {
-                ConsoleWrite("{0}\t{1}", alias.Key, alias.Value.Help(alias.Key));
+                ConsoleWrite("{0}\t{1}{2}", command.Key, command.Value.Help(command.Key), command.Value.isPipe ? " (pipe)" : "");
             }
         }
         public override string Help(params string[] help_args)

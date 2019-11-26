@@ -6,5 +6,9 @@
         {
             ConsoleWrite(args);
         }
+        public override string Help(params string[] help_args)
+        {
+            return "Writes text";
+        }
     }
 }

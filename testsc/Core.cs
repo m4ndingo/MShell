@@ -19,14 +19,13 @@ namespace testsc
         static public string last_message = "";
         static public bool silent = false;
         public void cmds(string prompt_cmds)
-        {
-            
+        {            
             ParseTypedCmds(prompt_cmds);
         }
 
-        private void ParseTypedCmds(string prompt_cmds)
+        static public void ParseTypedCmds(string prompt_cmds)
         {
-            if (prompt_cmds == null)
+            if (string.IsNullOrEmpty(prompt_cmds))
                 return;
             foreach (string cmd_with_args_and_pipes in prompt_cmds.Split(';'))          // cmd1;cmd2|cmd3
             {
@@ -59,7 +58,7 @@ namespace testsc
             return settings.ContainsKey(name) ? settings[name] : def;
         }
 
-        private CoreCommand ParseCmd(string cmd_with_args, bool isPipe = false)
+        static private CoreCommand ParseCmd(string cmd_with_args, bool isPipe = false)
         {
             KeyValuePair<string, string> kCmd = getCmdArgs(cmd_with_args);
             if (isValidCommand(kCmd.Key).Equals(false))
@@ -100,11 +99,13 @@ namespace testsc
             core_commands.Add("loop", settingsManager);
             core_commands.Add("echo", new echoCommand());
             core_commands.Add("nl", new nlCommand());
+            core_commands.Add("exec", new execCommand());
+            core_commands.Add("PS1", settingsManager);
             core_commands.Add("help", helpManager);
             core_commands.Add("?", helpManager);
         }
 
-        public KeyValuePair<string, string> getCmdArgs(string cmd_with_args)
+        static public KeyValuePair<string, string> getCmdArgs(string cmd_with_args)
         {
             string[] my_args = cmd_with_args.Split(' ');
             return new KeyValuePair<string, string>(my_args[0], string.Join(" ", my_args.Skip(1)));

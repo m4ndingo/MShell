@@ -16,7 +16,7 @@ namespace testsc
         internal string args;
         internal bool isPipe;
         internal string last_message;
-        internal bool silent;
+        
         // results
         public string results = null;
         public RESULT_TYPE result_type = RESULT_TYPE.TEXT;

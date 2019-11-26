@@ -6,21 +6,20 @@ using System.Threading.Tasks;
 
 namespace testsc
 {
-    class nlCommand : CoreCommand
+    class execCommand : CoreCommand
     {
-        public nlCommand()
+        public execCommand()
         {
             this.isPipe = true;
         }
         public override void Run()
-        {
-            int idx = 0;
+        {            
             foreach (string line in last_message.Split('\n'))
-                ConsoleWrite("{0};{1}", (idx++).ToString(), line);
+                Core.ParseTypedCmds(line);
         }
         public override string Help(params string[] help_args)
         {
-            return "Enumerate lines";
+            return "Execute lines";
         }
     }
 }
