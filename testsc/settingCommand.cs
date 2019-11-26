@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace testsc
 {
@@ -15,7 +12,6 @@ namespace testsc
         }
         public override void Run()
         {
-            //ConsoleWrite("Run(): settingCommand : CoreCommand - Running: {0}", this.cmd_with_args);            
             if (this.cmd_without_args.Equals("set"))
             {
                 if (this.args.Contains(" "))
