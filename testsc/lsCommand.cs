@@ -4,6 +4,10 @@ namespace testsc
 {
     class lsCommand : CoreCommand
     {
+        public override string Help(params string[] help_args)
+        {
+            return "List files in current directory. Flags: -l for extended info. Settings: curdir";
+        }
         public override void Run()
         {
             bool extended = args.Contains("-l");
@@ -21,10 +25,6 @@ namespace testsc
                 else
                     ConsoleWrite(baseName);
             }
-        }
-        public override string Help(params string[] help_args)
-        {
-            return "List files in current directory. Use option -l for extended info";
         }
     }
 }

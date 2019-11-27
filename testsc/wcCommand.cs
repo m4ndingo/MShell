@@ -2,18 +2,14 @@
 {
     class wcCommand : CoreCommand
     {
-        public wcCommand()
+        public override string Help(params string[] help_args)
         {
-            this.isPipe = true;
+            return "Count number of lines";
         }
         public override void Run()
         {
             string filename = this.args;
             ConsoleWrite(last_message.Split('\n').Length.ToString());
-        }
-        public override string Help(params string[] help_args)
-        {
-            return "count lines";
         }
     }
 }

@@ -6,9 +6,9 @@ namespace testsc
 {
     class npCommand : CoreCommand
     {
-        public npCommand()
+        public override string Help(params string[] help_args)
         {
-            this.isPipe = true;
+            return "Send to namedpipe. Settings: npipe";
         }
         public override void Run()
         {
@@ -47,10 +47,5 @@ namespace testsc
             }
             return result;
         }    
-
-        public override string Help(params string[] help_args)
-        {
-            return "Send to namedpipe";
-        }
     }
 }

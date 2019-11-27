@@ -2,18 +2,14 @@
 {
     class execCommand : CoreCommand
     {
-        public execCommand()
+        public override string Help(params string[] help_args)
         {
-            this.isPipe = true;
+            return "Execute piped commands";
         }
         public override void Run()
         {            
             foreach (string line in last_message.Split('\n'))
                 Core.ParseTypedCmds(line);
-        }
-        public override string Help(params string[] help_args)
-        {
-            return "Execute piped commands";
         }
     }
 }

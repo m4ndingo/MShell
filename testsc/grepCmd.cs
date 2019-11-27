@@ -7,9 +7,9 @@ namespace testsc
 {
     class grepCommand : CoreCommand
     {
-        public grepCommand()
+        public override string Help(params string[] help_args)
         {
-            this.isPipe = true;
+            return "Grep lines using regex. Settings: ignorecase escapeargs";
         }
         public override void Run()
         {
@@ -25,10 +25,6 @@ namespace testsc
             {
                 ConsoleWrite("grepCommand:Run(): {0}", ex.Message);
             }
-        }
-        public override string Help(params string[] help_args)
-        {
-            return "Grep lines";
         }
     }
 }

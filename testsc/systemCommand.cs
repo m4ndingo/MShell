@@ -7,6 +7,10 @@ namespace testsc
 {
     class systemCommand : CoreCommand
     {
+        public override string Help(params string[] help_args)
+        {
+            return "Executes external programs. Settings: consoleap. Ex: ! notepad";
+        }
         public override void Run()
         {
             KeyValuePair<string, string> kArgs = Core.getCmdArgs(args);
@@ -41,10 +45,6 @@ namespace testsc
             {
                 ConsoleWrite("systemCommand: {0}", ex.Message);
             }
-        }
-        public override string Help(params string[] help_args)
-        {
-            return "Executes external programs";
         }
     }
 }

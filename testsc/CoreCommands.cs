@@ -12,13 +12,20 @@ namespace testsc
             TEXT        = 1,
             COMMANDS    = 2
         };
+        public enum INPUT_TYPE
+        {
+            NONE        = 0,
+            PARAMS      = 1,
+            PIPE        = 2,
+            HYBRID      = 3
+        }
         // for commands context
         public string cmd_with_args = null;
         internal string cmd_without_args;
         internal string args;
         internal bool isPipe;
         internal string last_message;
-        
+
         // results
         public string results = null;
         public RESULT_TYPE result_type = RESULT_TYPE.TEXT;
@@ -34,20 +41,21 @@ namespace testsc
         public static void ConsoleWrite(string message, params string[] args)
         {
             string output = args.Length > 0 ? string.Format(message, args) : message;
-            if (Core.silent.Equals(false))
+            if (output.Length > 0 && Core.silent.Equals(false)) 
             {
                 Console.WriteLine(AnsiColorize(output));
             }
             Core.last_message += Core.last_message.Length == 0 ? output : '\n' + output;
         }
-        public static string getParameter(string args, string setting, string def = null) // return commandline arguments if found, else return setting or default value
+        // return commandline arguments if found, else return setting or default value
+        public static string getParameter(string args, string setting, string def = null)
         {
             return args.Length > 0 ? args : Core.readSetting(setting, def);
         }
 
         private static string AnsiColorize(string output)
         {
-            char ESC = '\x1b';//{ESC}[32m
+            char ESC = '\x1b';  // {ESC}[32m
             output = Regex.Replace(output,"([;<>\\|])", $"{ESC}[36m$1{ESC}[0m");
             return output;
         }

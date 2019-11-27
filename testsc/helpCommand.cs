@@ -19,7 +19,13 @@ namespace testsc
             }
             foreach (KeyValuePair<string, CoreCommand> command in Core.core_commands)
             {
-                ConsoleWrite("{0,-12}{1}{2}", command.Key, command.Value.Help(command.Key), command.Value.isPipe ? " (pipe)" : "");
+                Core.CommandProperty properties = Core.getCommandProperties(command.Key);
+                ConsoleWrite(
+                    "{0,-12}{3,-8} {1}{2}",
+                    command.Key,
+                    command.Value.Help(command.Key),
+                    properties.input_type.Equals(CoreCommand.INPUT_TYPE.PIPE) ? " (pipe)" : "",
+                    properties != null ? properties.input_type.ToString() : "");
             }
         }
         public override string Help(params string[] help_args)

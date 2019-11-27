@@ -5,9 +5,9 @@ namespace testsc
 {
     class teeCommand : CoreCommand
     {
-        public teeCommand()
+        public override string Help(params string[] help_args)
         {
-            this.isPipe = true;
+            return "Send piped data to file. Flags: -f to force, -a to append";
         }
         public override void Run()
         {
@@ -35,14 +35,11 @@ namespace testsc
                 ConsoleWrite($"teeCommand: Run(): output file \"{filename}\" exists. Use parameter -f to force");
                 return;
             }
+            ConsoleWrite(last_message); // it's tee
             using (StreamWriter file = new StreamWriter(filename, append))
             {
                 file.Write(last_message);
             }            
-        }
-        public override string Help(params string[] help_args)
-        {
-            return "Send input to file. Use parameter -f to force, -a to append";
         }
     }
 }

@@ -10,6 +10,22 @@ namespace testsc
             if (Core.aliases.Count.Equals(0))
                 LoadSettings();
         }
+        public override string Help(params string[] help_args)
+        {
+            string name = help_args[0];
+            string help = "";
+            if (name.Equals("set"))
+                help = string.Format("I'm the settings command. Type \"{0}\" or \"{0} [setting] [value]\" to add a new setting", name);
+            else
+            {
+                if (Core.settings.ContainsKey(name))
+                    help += string.Format("Try \"{0} [value]\" to change its value. Current value is \"{1}\"", name, Core.settings[name]);
+                else
+                    help += string.Format("Try \"set {0} [value]\" to set its value", name);
+                help += " (setting)";
+            }
+            return help;
+        }
         public override void Run()
         {
             if (this.cmd_without_args.Equals("set"))
@@ -91,22 +107,6 @@ namespace testsc
                 return;
             }
             Core.settings[name] = value;
-        }
-        public override string Help(params string[] help_args)
-        {
-            string name = help_args[0];
-            string help = "";
-            if(name.Equals("set"))
-                help = string.Format("I'm the settings command. Type \"{0}\" or \"{0} [setting] [value]\" to add a new setting", name);
-            else
-            {                 
-                if (Core.settings.ContainsKey(name))
-                    help += string.Format("Try \"{0} [value]\" to change its value. Current value is \"{1}\"", name, Core.settings[name]);
-                else
-                    help += string.Format("Try \"set {0} [value]\" to set its value", name);
-                help += " (setting)";
-            }
-            return help;
         }
     }
 }
