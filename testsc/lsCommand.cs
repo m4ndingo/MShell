@@ -6,18 +6,25 @@ namespace testsc
     {
         public override void Run()
         {
+            bool extended = args.Contains("-l");
             string[] fileEntries = Directory.GetFiles(Core.readSetting("curdir", "."));
             foreach (string fileName in fileEntries)
             {
                 string baseName = fileName;
                 if (fileName.StartsWith(@".\"))
                     baseName = fileName.Substring(2);
-                ConsoleWrite(baseName);
+                if (extended)
+                {
+                    FileInfo info = new FileInfo(baseName);
+                    ConsoleWrite("{0};{1};{2}", info.CreationTime.ToString(),baseName, info.Length.ToString());
+                }
+                else
+                    ConsoleWrite(baseName);
             }
         }
         public override string Help(params string[] help_args)
         {
-            return "List files in current directory";
+            return "List files in current directory. Use option -l for extended info";
         }
     }
 }

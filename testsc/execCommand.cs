@@ -13,7 +13,7 @@
         }
         public override string Help(params string[] help_args)
         {
-            return "Execute lines";
+            return "Execute piped commands";
         }
     }
 }

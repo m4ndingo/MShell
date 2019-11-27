@@ -13,8 +13,8 @@ namespace testsc
         }
         public override void Run()
         {
-            bool ignoreCase = Core.readSetting("ignorecase", "1").Equals("1");
-            bool escapeArgs = Core.readSetting("escapeargs", "0").Equals("1");
+            bool ignoreCase = Core.readSetting("ignorecase", "0").Equals("1");  // set to 0 for case sensitive
+            bool escapeArgs = Core.readSetting("escapeargs", "0").Equals("1");  // escape regex
             try
             {
                 Regex myRegex = new Regex(escapeArgs ? Regex.Escape(args) : args, (ignoreCase ? RegexOptions.IgnoreCase : 0) | RegexOptions.Compiled);

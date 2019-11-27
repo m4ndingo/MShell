@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace testsc
 {
-    internal class CoreCommand //: Core
+    internal class CoreCommand
     {
         public enum RESULT_TYPE
         {
@@ -34,8 +35,21 @@ namespace testsc
         {
             string output = args.Length > 0 ? string.Format(message, args) : message;
             if (Core.silent.Equals(false))
-                Console.WriteLine(output);
+            {
+                Console.WriteLine(AnsiColorize(output));
+            }
             Core.last_message += Core.last_message.Length == 0 ? output : '\n' + output;
+        }
+        public static string getParameter(string args, string setting, string def = null) // return commandline arguments if found, else return setting or default value
+        {
+            return args.Length > 0 ? args : Core.readSetting(setting, def);
+        }
+
+        private static string AnsiColorize(string output)
+        {
+            char ESC = '\x1b';//{ESC}[32m
+            output = Regex.Replace(output,"([;<>\\|])", $"{ESC}[36m$1{ESC}[0m");
+            return output;
         }
     }
 }

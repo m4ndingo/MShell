@@ -51,13 +51,17 @@
     <Compile Include="execCommand.cs" />
     <Compile Include="grepCmd.cs" />
     <Compile Include="helpCommand.cs" />
+    <Compile Include="lastCommand.cs" />
     <Compile Include="lsCommand.cs" />
     <Compile Include="nlCommand.cs" />
+    <Compile Include="npCommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Prompt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="replaceCommand.cs" />
     <Compile Include="settingCommand.cs" />
+    <Compile Include="systemCommand.cs" />
+    <Compile Include="teeCommand.cs" />
     <Compile Include="wcCommand.cs" />
   </ItemGroup>
   <ItemGroup>

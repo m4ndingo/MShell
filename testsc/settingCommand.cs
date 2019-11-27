@@ -19,6 +19,10 @@ namespace testsc
                 else
                     DumpSettings();
             }
+            else if (this.cmd_without_args.Equals("unset"))
+            {
+                RemoveSetting();
+            }
             else
             {
                 if (isValidSetting(this.cmd_without_args).Equals(false))
@@ -38,6 +42,17 @@ namespace testsc
             string value = string.Join(" ", args.Skip(1));
             Core.settings[setting] = value;
             Core.core_commands[setting] = Core.settingsManager;
+        }
+        private void RemoveSetting()
+        {
+            if(this.args.Length.Equals(0))
+            {
+                ConsoleWrite("Removesetting(): settingCommand : setting name is missing");
+                return;
+            }
+            if (Core.settings.ContainsKey(this.args).Equals(false)) return;
+            Core.settings.Remove(this.args);
+            Core.core_commands.Remove(this.args);
         }
         private void DumpSettings()
         {
@@ -65,8 +80,8 @@ namespace testsc
         {
             Core.settings.Clear();
             Core.settings.Add("loop", "1");
-            Core.settings.Add("PS1", "$ ");
-            Core.settings.Add("ignorecase", "0");
+            Core.settings.Add("PS1", Core.UnescapeSpecialChars("{GREEN}${DEF} "));
+            //Core.settings.Add("ignorecase", "0");
         }
         private void UpdateSetting(string name, string value)
         {
@@ -80,11 +95,16 @@ namespace testsc
         public override string Help(params string[] help_args)
         {
             string name = help_args[0];
-            string help= string.Format("I'm the settings command. Type \"{0}\" for reading or \"{0} [setting] [value]\" to add a new setting", name); 
-            if (Core.settings.ContainsKey(name))
-            {
-                help = string.Format("Setting \"{0}\". Try \"{0} [value]\" to change its value", name);
-                help += string.Format(". Current value is \"{0}\"", Core.settings[name]);
+            string help = "";
+            if(name.Equals("set"))
+                help = string.Format("I'm the settings command. Type \"{0}\" or \"{0} [setting] [value]\" to add a new setting", name);
+            else
+            {                 
+                if (Core.settings.ContainsKey(name))
+                    help += string.Format("Try \"{0} [value]\" to change its value. Current value is \"{1}\"", name, Core.settings[name]);
+                else
+                    help += string.Format("Try \"set {0} [value]\" to set its value", name);
+                help += " (setting)";
             }
             return help;
         }
