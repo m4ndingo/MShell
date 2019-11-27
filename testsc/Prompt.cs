@@ -15,7 +15,8 @@ namespace testsc
             refreshVars();
         }
         public IEnumerable<string> doLoop()
-        {            
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
             while (this.loop)
             {
                 Console.Write(this.PS1);

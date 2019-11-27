@@ -96,6 +96,7 @@ namespace testsc
             core_commands.Add("ls", new lsCommand());
             core_commands.Add("cat", new catCommand());
             core_commands.Add("grep", new grepCommand());
+            core_commands.Add("replace", new replaceCommand());
             core_commands.Add("alias", aliasManager);
             core_commands.Add("set", settingsManager);
             core_commands.Add("loop", settingsManager);
@@ -104,6 +105,7 @@ namespace testsc
             core_commands.Add("wc", new wcCommand());
             core_commands.Add("exec", new execCommand());
             core_commands.Add("PS1", settingsManager);
+            core_commands.Add("ignorecase", settingsManager);
             core_commands.Add("?", helpManager);
             core_commands.Add("q", aliasManager);
         }

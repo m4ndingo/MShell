@@ -66,6 +66,7 @@ namespace testsc
             Core.settings.Clear();
             Core.settings.Add("loop", "1");
             Core.settings.Add("PS1", "$ ");
+            Core.settings.Add("ignorecase", "0");
         }
         private void UpdateSetting(string name, string value)
         {

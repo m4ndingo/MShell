@@ -19,7 +19,7 @@ namespace testsc
             }
             foreach (KeyValuePair<string, CoreCommand> command in Core.core_commands)
             {
-                ConsoleWrite("{0}\t{1}{2}", command.Key, command.Value.Help(command.Key), command.Value.isPipe ? " (pipe)" : "");
+                ConsoleWrite("{0,-12}{1}{2}", command.Key, command.Value.Help(command.Key), command.Value.isPipe ? " (pipe)" : "");
             }
         }
         public override string Help(params string[] help_args)
