@@ -89,7 +89,7 @@ alog;cat {ARGS}|match (^.+?)\s-.+?\[(.+?)\].+?"(.+?)" {0,14}\;{2}|table|uniq
 │ 85.220.201.38│GET /web/wp-admin/css/login.min.css?ver=5.2.3 HTTP/1.1  │
 │ 85.220.201.58│GET /web/wp-admin/css/forms.min.css?ver=5.2.3 HTTP/1.1  │
 │ 85.220.201.58│GET /web/wp-admin/css/l10n.min.css?ver=5.2.3 HTTP/1.1   │
-│  09.70.200.18│GET /web/wp-admin/css/install.min.css?ver=5.2.3 HTTP/1.1│
+│   9.70.200.18│GET /web/wp-admin/css/install.min.css?ver=5.2.3 HTTP/1.1│
 └──────────────┴────────────────────────────────────────────────────────┘
 ```
 ### Using pipes
