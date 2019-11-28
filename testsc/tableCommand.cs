@@ -38,7 +38,7 @@ namespace testsc
             this.Cols = 1;
             if (data.Length == 0)
                 return;
-            this._lines = data.Split('\n');            
+            this._lines = Core.TagCommandlineChars(data).Split('\n');            
             this.Rows = _lines.Length;
             this.Cols = _lines.Select(line => line.Split(';').Length).Max();
             this.ColumnsWidth = new int[this.Cols];
@@ -98,7 +98,7 @@ namespace testsc
         public string readCell(int j,int i)
         {
             string[] cols = _lines[i].Split(';');
-            if (j < cols.Length) return cols[j];
+            if (j < cols.Length) return Core.UntagCommandlineChars(cols[j]);
             return "";
         }
     }

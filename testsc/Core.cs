@@ -29,12 +29,13 @@ namespace testsc
             ParseTypedCmds(prompt_cmds);
         }
 
-        static public void ParseTypedCmds(string prompt_cmds)
+        static public string ParseTypedCmds(string prompt_cmds)
         {
             if (string.IsNullOrEmpty(prompt_cmds))
-                return;
+                return "";
             
             prompt_cmds = TagCommandlineChars(prompt_cmds);
+            string lres = "", last = "";
             foreach (string cmd_with_args_and_pipes in prompt_cmds.Split(';'))          // cmd1;cmd2|cmd3
             {
                 //bool isPipe = false;
@@ -42,12 +43,12 @@ namespace testsc
                 silent = cmd_with_args_pipeables.Length > 1;
                 for (int i = 0; i < cmd_with_args_pipeables.Length; i++) 
                 {
-                    string cmd_with_args = UntagCommandlineChars(cmd_with_args_pipeables[i]);
+                    string cmd_with_args = UntagCommandlineChars(cmd_with_args_pipeables[i]);                    
                     if (i == cmd_with_args_pipeables.Length - 1) silent = false;
-                    CoreCommand cmd = ParseCmd(cmd_with_args);
+                    CoreCommand cmd = ParseCmd(cmd_with_args, last_message);
                     if (cmd == null)
                         continue;
-                    if (cmd.result_type.Equals(CoreCommand.RESULT_TYPE.COMMANDS))
+                    if (cmd.result_type.Equals(CoreCommand.RESULT_TYPE.COMMANDS)/* || cmd.result_type.Equals(CoreCommand.RESULT_TYPE.NONE)*/)
                     {
                         string new_command = cmd.results;
                         if (new_command.Contains("{ARGS}"))
@@ -55,15 +56,18 @@ namespace testsc
                         else
                             new_command += " " + cmd.args;
                         last_message = cmd.last_message;
-                        ParseTypedCmds(new_command);    // output are more commands 
+                        lres=ParseTypedCmds(new_command);    // output are more commands 
+                        last_message = lres;
                     }
                     else if (cmd.results != null && cmd.result_type.Equals(CoreCommand.RESULT_TYPE.NONE).Equals(false)) 
                     {
                         CoreCommand.ConsoleWrite("Results: '{0}' Type: {1}", cmd.results, cmd.result_type.ToString());
                     }                    
                 }
+                last = Core.last_message;
+                Core.last_message = "";
             }
-            Core.last_message = "";
+            return last;
         }
         // properties and configuration for managed command objects
         public class CommandProperty : ICloneable
@@ -168,7 +172,7 @@ namespace testsc
         static public string UntagCommandlineChars(string commands)
         {
             commands = commands.Replace("{PIPE}", "|");
-            commands = commands.Replace("{SC}", ";");
+            commands = commands.Replace("{SC}", "\\;");
             commands = commands.Replace("{LT}", "<");
             commands = commands.Replace("{GT}", ">");
             // colors
@@ -184,9 +188,10 @@ namespace testsc
             return settings.ContainsKey(name) ? settings[name] : def;
         }
 
-        static private CoreCommand ParseCmd(string cmd_with_args)
+        static private CoreCommand ParseCmd(string cmd_with_args, string pipe_string = null)
         {
             KeyValuePair<string, string> kCmd = getCmdArgs(cmd_with_args);
+            if (kCmd.Key.Length.Equals(0)) return null;
             if (isValidCommand(kCmd.Key).Equals(false))
             {
                 CoreCommand.ConsoleWrite("command '{0}' not found", kCmd.Key);
@@ -196,6 +201,8 @@ namespace testsc
             // load command
             CoreCommand cmd = Core.core_commands[kCmd.Key];
             // prepare context
+            cmd.results             = pipe_string;
+            cmd.result_type         = CoreCommand.RESULT_TYPE.NONE;
             cmd.cmd_with_args       = cmd_with_args;
             cmd.cmd_without_args    = kCmd.Key;
             cmd.args                = kCmd.Value;            

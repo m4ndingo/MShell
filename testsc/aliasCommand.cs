@@ -78,7 +78,7 @@ namespace testsc
                     ConsoleWrite("DumpAliases(): Alias \"{0}\" not found", args);
                     return;
                 }
-                ConsoleWrite("{0};{1}", args, Core.aliases[args]);
+                ConsoleWrite("{0};{1}", args, Core.EncodeNoAscii(Core.aliases[args]));
                 return;
             }
             foreach (KeyValuePair<string, string> alias in Core.aliases)

@@ -46,7 +46,7 @@ namespace testsc
                     }
                     try
                     {
-                        output = string.Format(kArgs.Value, items);
+                        output = string.Format(kArgs.Value.Replace("\\;", ";"), items);
                     }catch(Exception ex)
                     {
                         ConsoleWrite("matchCommand: Run(): {0}", ex.Message);
