@@ -47,11 +47,16 @@ q           NONE    A $ loop 0                                       // Close sh
 │dbz    │decode b64|decode zlib                                                   │
 │lls    │ls -l {ARGS} |table                                                      │
 │strings│replace \x00|match [\x20-\x7f]{4,}|uniq                                  │
-│alog   │cat {ARGS}|match (^.+?)\s-.+?\[(.+?)\].+?"(.+?)" {0,14};{2}|table|uniq   │
+│alog   │cat {ARGS}|match (^.+?)\s-.+?\[(.+?)\].+?"(.+?)" {0,14}\;{2}|table|uniq  │
 │q      │loop 0                                                                   │
 │?      │help                                                                     │
 └───────┴─────────────────────────────────────────────────────────────────────────┘
-
+? alias alog
+alog;cat {ARGS}|match (^.+?)\s-.+?\[(.+?)\].+?"(.+?)" {0,14}\;{2}|table|uniq
+? alias alog|table
+┌────┬─────────────────────────────────────────────────────────────────────────┐
+│alog│cat {ARGS}|match (^.+?)\s-.+?\[(.+?)\].+?"(.+?)" {0,14}\;{2}|table|uniq  │
+└────┴─────────────────────────────────────────────────────────────────────────┘
 ? lls
 ┌────┬─────┬───────────────────┬─────────────────┐
 │file│191  │27/11/2019 17:57:29│alias            │
@@ -61,7 +66,20 @@ q           NONE    A $ loop 0                                       // Close sh
 │file│189  │26/11/2019 18:10:15│testsc.exe.config│
 │file│91648│26/11/2019 18:10:15│testsc.pdb       │
 └────┴─────┴───────────────────┴─────────────────┘
-
+? alog foo\|grep wp-admin/
+┌──────────────┬────────────────────────────────────────────────────────┐
+│ 85.107.17.121│GET /wp-admin/ HTTP/1.1                                 │
+│ 85.220.201.48│GET /wp-admin/ HTTP/1.1                                 │
+│   9.70.200.38│GET /web/wp-admin/css/login.min.css?ver=5.2.3 HTTP/1.1  │
+│   9.70.200.38│GET /web/wp-admin/css/forms.min.css?ver=5.2.3 HTTP/1.1  │
+│   9.70.200.38│GET /web/wp-admin/css/l10n.min.css?ver=5.2.3 HTTP/1.1   │
+│ 85.220.201.38│GET /web/wp-admin/css/login.min.css?ver=5.2.3 HTTP/1.1  │
+│ 85.220.201.58│GET /web/wp-admin/css/forms.min.css?ver=5.2.3 HTTP/1.1  │
+│ 85.220.201.58│GET /web/wp-admin/css/l10n.min.css?ver=5.2.3 HTTP/1.1   │
+│   9.70.200.18│GET /web/wp-admin/css/install.min.css?ver=5.2.3 HTTP/1.1│
+└──────────────┴────────────────────────────────────────────────────────┘
+? help|grep strings
+strings     PIPE    A $ replace \x00|match [\x20-\x7f]{4,}|uniq      // Extract strings from files
 ? cat testsc.exe|strings
 !This program cannot be run in DOS mode.
 $PEL
@@ -76,21 +94,6 @@ v@@.reloc
 *.sw
 +>+o
 ...
-
-? alias alog
-alog;cat {ARGS}|match (^.+?)\s-.+?\[(.+?)\].+?"(.+?)" {0,14}\;{2}|table|uniq
-? alog foo\|grep wp-admin/
-┌──────────────┬────────────────────────────────────────────────────────┐
-│ 85.107.17.121│GET /wp-admin/ HTTP/1.1                                 │
-│ 85.220.201.48│GET /wp-admin/ HTTP/1.1                                 │
-│   9.70.200.38│GET /web/wp-admin/css/login.min.css?ver=5.2.3 HTTP/1.1  │
-│   9.70.200.38│GET /web/wp-admin/css/forms.min.css?ver=5.2.3 HTTP/1.1  │
-│   9.70.200.38│GET /web/wp-admin/css/l10n.min.css?ver=5.2.3 HTTP/1.1   │
-│ 85.220.201.38│GET /web/wp-admin/css/login.min.css?ver=5.2.3 HTTP/1.1  │
-│ 85.220.201.58│GET /web/wp-admin/css/forms.min.css?ver=5.2.3 HTTP/1.1  │
-│ 85.220.201.58│GET /web/wp-admin/css/l10n.min.css?ver=5.2.3 HTTP/1.1   │
-│   9.70.200.18│GET /web/wp-admin/css/install.min.css?ver=5.2.3 HTTP/1.1│
-└──────────────┴────────────────────────────────────────────────────────┘
 ```
 ### Using pipes
 
