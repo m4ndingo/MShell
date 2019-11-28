@@ -7,7 +7,9 @@ namespace testsc
     class Core
     {
         // commands
-        static public Dictionary<string, CoreCommand> core_commands = null;
+        static public Dictionary<string, CoreCommand> core_commands = null;        
+        // properties
+        public static Dictionary<string, CommandProperty> command_properties = new Dictionary<string, Core.CommandProperty>();
 
         // dictionaries
         static public Dictionary<string, string> settings = new Dictionary<string, string>();
@@ -63,12 +65,98 @@ namespace testsc
             }
             Core.last_message = "";
         }
+        // properties and configuration for managed command objects
+        public class CommandProperty : ICloneable
+        {
+            public CoreCommand.INPUT_TYPE input_type { get; set; }
+            public string help { get; set; }
+            public bool is_setting { get; set; }
+            public bool is_alias { get; set; }
+            public object Clone()
+            {
+                return this.MemberwiseClone();
+            }
+        }
+
+        static private void LoadValidCommands()
+        {
+            core_commands = new Dictionary<string, CoreCommand>();
+
+            // avalable configurations
+            CommandProperty isPipe = new CommandProperty() { input_type = CoreCommand.INPUT_TYPE.PIPE };
+            CommandProperty isHybrid = new CommandProperty() { input_type = CoreCommand.INPUT_TYPE.HYBRID };
+            CommandProperty noParams = new CommandProperty() { input_type = CoreCommand.INPUT_TYPE.NONE };
+            CommandProperty Params = new CommandProperty() { input_type = CoreCommand.INPUT_TYPE.PARAMS };
+
+            AddNewCommand("?", helpManager, Params);
+            AddNewCommand("help", helpManager, Params);
+            AddNewCommand("ls", new lsCommand(), Params);
+            AddNewCommand("cat", new catCommand(), Params);
+            AddNewCommand("grep", new grepCommand(), isPipe);
+            AddNewCommand("match", new matchCommand(), isPipe);
+            AddNewCommand("replace", new replaceCommand(), isPipe);
+            AddNewCommand("alias", aliasManager, isHybrid);
+            AddNewCommand("set", settingsManager, Params);
+            AddNewCommand("unset", settingsManager, Params);
+            AddNewCommand("var", new varCommand(), isHybrid);
+            AddNewCommand("loop", settingsManager, Params);
+            AddNewCommand("echo", new echoCommand(), Params);
+            AddNewCommand("nl", new nlCommand(), isPipe);
+            AddNewCommand("np", new npCommand(), isPipe);
+            AddNewCommand("wc", new wcCommand(), isPipe);
+            AddNewCommand("tee", new teeCommand(), isPipe);
+            AddNewCommand("uniq", new uniqCommand(), isPipe);
+            AddNewCommand("exec", new execCommand(), isPipe);
+            AddNewCommand("decode", new decodeCommand(), isPipe);
+            AddNewCommand("table", new tableCommand(), isPipe);
+            AddNewCommand("PS1", settingsManager, Params);
+            AddNewCommand("ignorecase", settingsManager, Params);
+            AddNewCommand("last", new lastCommand(), noParams);
+            AddNewCommand("!", new systemCommand(), Params);
+        }
+
+        static private void LoadCommands()
+        {
+            LoadValidCommands();
+            Load_Alias();
+        }
+
+        private static void Load_Alias()
+        {
+            CoreCommand.INPUT_TYPE Params = CoreCommand.INPUT_TYPE.PARAMS;
+            aliasManager.AddAlias(  "dbz",
+                                    "decode b64|decode zlib", 
+                                    CoreCommand.INPUT_TYPE.PIPE, "Decodes base64 then zlib");
+            aliasManager.AddAlias(  "lls",        
+                                    "ls -l {ARGS} |table", 
+                                    Params, "List files as table");
+            aliasManager.AddAlias(  "strings",    
+                                    "replace \x00|match [\\x20-\\x7f]{4,}|uniq", 
+                                    CoreCommand.INPUT_TYPE.PIPE, "Extract strings from files");
+            aliasManager.AddAlias(  "alog",       
+                                    "cat {ARGS}|match (^.+?)\\s-.+?\\[(.+?)\\].+?\"(.+?)\" {0,14}\\;{2}|table|uniq", 
+                                    Params, "Apache log as table");
+            aliasManager.AddAlias(  "q", 
+                                    "loop 0", 
+                                    CoreCommand.INPUT_TYPE.NONE, "Close shell");
+            aliasManager.AddAlias(  "?", 
+                                    "help");
+        }
+
         public static string UnescapeArgs(string text)
         {
             text = text.Replace("\\n", "\n");
             text = text.Replace("\\s", " ");
             return text;
         }
+
+        public static string EncodeNoAscii(string value)
+        {
+            value = value.Replace("\x00", "\\x00");
+            value = value.Replace("\x1b", "\\x1b");
+            return value;
+        }
+
         static public string TagCommandlineChars(string commands)
         {
             commands = commands.Replace("\\|", "{PIPE}");
@@ -85,6 +173,7 @@ namespace testsc
             commands = commands.Replace("{GT}", ">");
             // colors
             commands = commands.Replace("{GREEN}", "{ESC}[32m");
+            commands = commands.Replace("{PINK}",  "{ESC}[35m");
             commands = commands.Replace("{DEF}", "{ESC}[0m");
             // esc
             commands = commands.Replace("{ESC}", "\x1b");
@@ -129,8 +218,6 @@ namespace testsc
             return core_commands != null && core_commands.ContainsKey(cmd);
         }
         
-        public static Dictionary<string, CommandProperty> command_properties = new Dictionary<string, Core.CommandProperty>();
-
         static private void AddNewCommand(string command, CoreCommand commandManager, CommandProperty properties)
         {
             bool isSetting = command.Equals("set").Equals(false) && commandManager.Equals(settingsManager);
@@ -152,69 +239,6 @@ namespace testsc
             return command_properties[cmd];
         }
 
-        // properties and configuration for managed command objects
-        public class CommandProperty : ICloneable
-        {                    
-            public CoreCommand.INPUT_TYPE input_type { get; set; }
-            public string help { get; set; }
-            public bool is_setting { get; set; }
-            public bool is_alias { get; set; }
-            public object Clone()
-            {
-                return this.MemberwiseClone();
-            }
-        }
-
-        static private void LoadValidCommands()
-        {
-            core_commands = new Dictionary<string, CoreCommand>();
-
-            // avalable configurations
-            CommandProperty isPipe = new CommandProperty() { input_type = CoreCommand.INPUT_TYPE.PIPE };
-            CommandProperty isHybrid = new CommandProperty() { input_type = CoreCommand.INPUT_TYPE.HYBRID };
-            CommandProperty noParams = new CommandProperty() { input_type = CoreCommand.INPUT_TYPE.NONE };
-            CommandProperty Params = new CommandProperty() { input_type = CoreCommand.INPUT_TYPE.PARAMS };            
-
-            AddNewCommand("?", helpManager, Params);
-            AddNewCommand("help", helpManager, Params);
-            AddNewCommand("ls", new lsCommand(), Params);
-            AddNewCommand("cat", new catCommand(), Params);
-            AddNewCommand("grep", new grepCommand(), isPipe);
-            AddNewCommand("match", new matchCommand(), isPipe);
-            AddNewCommand("replace", new replaceCommand(), isPipe);
-            AddNewCommand("alias", aliasManager, isHybrid);
-            AddNewCommand("set", settingsManager, Params);
-            AddNewCommand("unset", settingsManager, Params);
-            AddNewCommand("var", new varCommand(), isHybrid);
-            AddNewCommand("loop", settingsManager, Params);
-            AddNewCommand("echo", new echoCommand(), Params);
-            AddNewCommand("nl", new nlCommand(), isPipe);
-            AddNewCommand("np", new npCommand(), isPipe);
-            AddNewCommand("wc", new wcCommand(), isPipe);
-            AddNewCommand("tee", new teeCommand(), isPipe);
-            AddNewCommand("uniq", new uniqCommand(), isPipe);
-            AddNewCommand("exec", new execCommand(), isPipe);
-            AddNewCommand("decode", new decodeCommand(), isPipe);
-            AddNewCommand("table", new tableCommand(), isPipe);
-            AddNewCommand("PS1", settingsManager, Params);
-            AddNewCommand("ignorecase", settingsManager, Params);
-            AddNewCommand("last", new lastCommand(), noParams);
-            AddNewCommand("!", new systemCommand(), Params);
-        }
-        static private void LoadCommands()
-        {
-
-            LoadValidCommands();
-            Load_Alias();
-        }
-        private static void Load_Alias()
-        {
-            aliasManager.AddAlias("dbz", "decode b64|decode zlib", CoreCommand.INPUT_TYPE.PIPE, "Decodes base64 then zlib");
-            aliasManager.AddAlias("lls", "ls -l {ARGS} |table", CoreCommand.INPUT_TYPE.NONE, "List files as table");
-            aliasManager.AddAlias("strings", "replace \x00|match [\\x20-\\x7f]{4,}|uniq", CoreCommand.INPUT_TYPE.PIPE, "Extract strings from files");
-            aliasManager.AddAlias("q", "loop 0", CoreCommand.INPUT_TYPE.NONE, "Close shell");
-            aliasManager.AddAlias("?", "help");
-        }
         static public KeyValuePair<string, string> getCmdArgs(string cmd_with_args)
         {
             string[] my_args = cmd_with_args.Split(' ');

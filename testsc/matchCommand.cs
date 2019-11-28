@@ -15,10 +15,13 @@ namespace testsc
         {
             bool ignoreCase = Core.readSetting("ignorecase", "0").Equals("1");  // set to 0 for case sensitive
 
+            KeyValuePair<string,string> kArgs = Core.getCmdArgs(args);
+            string sRegex = kArgs.Key;
             Regex matchRegex = null;
             try
             {
-                matchRegex = new Regex("(" + args + ")", (ignoreCase ? RegexOptions.IgnoreCase : 0) | RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.Singleline);
+                
+                matchRegex = new Regex(sRegex, (ignoreCase ? RegexOptions.IgnoreCase : 0) | RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.Singleline);
             }
             catch (Exception ex)
             {
@@ -31,13 +34,26 @@ namespace testsc
             MatchCollection match = matchRegex.Matches(last_message);
             for (int i = 0; i < match.Count; i++)
             {
-                ConsoleWrite(match[i].Groups[1].ToString());
-                /*
-                if (match[i].Groups.Count > 1)
+                string output = "";
+                if (kArgs.Value.Equals(""))
+                    output = match[i].Groups[0].ToString();
+                else
                 {
+                    string[] items = new string[match[i].Groups.Count - 1];
                     for (int n = 1; n < match[i].Groups.Count; n++)
-                        ConsoleWrite(match[i].Groups[n].ToString());
-                }*/
+                    {
+                        items[n - 1] = match[i].Groups[n].ToString();
+                    }
+                    try
+                    {
+                        output = string.Format(kArgs.Value, items);
+                    }catch(Exception ex)
+                    {
+                        ConsoleWrite("matchCommand: Run(): {0}", ex.Message);
+                        return;
+                    }
+                }
+                ConsoleWrite(output);
             }            
         }
     }

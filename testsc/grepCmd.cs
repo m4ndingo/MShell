@@ -17,7 +17,8 @@ namespace testsc
             bool escapeArgs = Core.readSetting("escapeargs", "0").Equals("1");  // escape regex
             try
             {
-                Regex myRegex = new Regex(escapeArgs ? Regex.Escape(args) : args, (ignoreCase ? RegexOptions.IgnoreCase : 0) | RegexOptions.Compiled);
+                Regex myRegex = new Regex(escapeArgs ? Regex.Escape(args) : args,
+                    (ignoreCase ? RegexOptions.IgnoreCase : 0) | RegexOptions.Compiled);
                 List<string> resultList = last_message.Split('\n').ToList<string>().Where(line => myRegex.IsMatch(line)).ToList();
 
                 ConsoleWrite(string.Join("\n", resultList));

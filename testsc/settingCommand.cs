@@ -21,7 +21,7 @@ namespace testsc
             else
             {
                 if (Core.settings.ContainsKey(name))
-                    help += string.Format("Try \"{0} [value]\" to change its value. Current value is \"{1}\"", name, Core.settings[name]);
+                    help += string.Format("Try \"{0} [value]\" to change its value. Current value is \"{1}\"", name, Core.EncodeNoAscii(Core.settings[name]));
                 else
                     help += string.Format("Try \"set {0} [value]\" to set its value", name);                
             }
@@ -83,12 +83,12 @@ namespace testsc
                     ConsoleWrite("DumpSettings(): Setting \"{0}\" not found", args);
                     return;
                 }
-                ConsoleWrite("{0};{1}", args, Core.settings[args]);
+                ConsoleWrite("{0};{1}", args, Core.EncodeNoAscii(Core.settings[args]));
                 return;
             }
             foreach (KeyValuePair<string, string> setting in Core.settings)
             {
-                ConsoleWrite("{0};{1}", setting.Key, setting.Value);
+                ConsoleWrite("{0};{1}", setting.Key, Core.EncodeNoAscii(setting.Value));
             }
         }
 
@@ -98,10 +98,8 @@ namespace testsc
         }
         public void LoadSettings()
         {
-            //Core.settings.Clear();
             Core.settings["loop"] = "1";
-            Core.settings["PS1"] = Core.UntagCommandlineChars("{GREEN}${DEF} ");
-            //Core.settings.Add("ignorecase", "0");
+            Core.settings["PS1"] = "{ESC}[33m? {DEF}";
         }
         private void UpdateSetting(string name, string value)
         {

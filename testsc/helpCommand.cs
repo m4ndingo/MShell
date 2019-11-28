@@ -21,11 +21,15 @@ namespace testsc
             {
                 Core.CommandProperty properties = Core.getCommandProperties(command.Key);
                 string help = command.Value.Help(command.Key); // call command help
-                if (properties!=null && properties.help != null)
-                    help = properties.help + ". " + help;
+                if (properties != null && properties.help != null)
+                {
+                    help = string.Format("{0,-54}{1}",
+                        help,
+                        Core.UntagCommandlineChars(" {GREEN} // " + properties.help + "{DEF}"));
+                }
 
                 ConsoleWrite(
-                    "{0,-12}{1,-8}{2,-1}{3,-2} {4}",
+                    "{0,-12}{1,-7}{2,-1}{3,-2}{4}",
                     command.Key,
                     properties != null ? properties.input_type.ToString() : "",
                     properties != null ? properties.is_setting ? "S" : " " : "",

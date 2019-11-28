@@ -1,4 +1,6 @@
-﻿namespace testsc
+﻿using System.IO;
+
+namespace testsc
 {
     class echoCommand : CoreCommand
     {

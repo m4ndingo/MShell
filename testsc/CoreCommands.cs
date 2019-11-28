@@ -53,11 +53,12 @@ namespace testsc
             return args.Length > 0 ? args : Core.readSetting(setting, def);
         }
 
-        private static string AnsiColorize(string output)
+        public static string AnsiColorize(string output)
         {
             char ESC = '\x1b';  // {ESC}[32m
             output = Regex.Replace(output,"([;<>\\|])", $"{ESC}[36m$1{ESC}[0m");
             output = Regex.Replace(output, "([│─┌┐└┘┬┴])", $"{ESC}[35m$1{ESC}[0m");
+            output = Regex.Replace(output, "(\\$)", $"{ESC}[32m$1{ESC}[0m");
             return output;
         }
     }

@@ -37,8 +37,8 @@ namespace testsc
         public IEnumerable<string> doLoop()
         {
             while (this.loop)
-            {                
-                Console.Write(this.PS1);                
+            {
+                Console.Write(Core.UntagCommandlineChars(CoreCommand.AnsiColorize(this.PS1)));
                 yield return Console.ReadLine();
                 refreshVars();
             }

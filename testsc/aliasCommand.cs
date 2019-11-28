@@ -13,7 +13,7 @@ namespace testsc
             {
                 return "I'm the alias command. Try: alias or alias [name] or alias [newalias] [commands]";
             }
-            return string.Format("Alias for '{0}'", Core.aliases[name]);
+            return string.Format("{0}{1}", CoreCommand.AnsiColorize("$ "), Core.EncodeNoAscii(Core.aliases[name]));
         }
         public override void Run()
         {
@@ -83,7 +83,9 @@ namespace testsc
             }
             foreach (KeyValuePair<string, string> alias in Core.aliases)
             {
-                ConsoleWrite("{0};{1}", alias.Key, alias.Value);
+                string value = alias.Value;
+                value = Core.EncodeNoAscii(value);
+                ConsoleWrite("{0};{1}", alias.Key, value);
             }
             
         }
