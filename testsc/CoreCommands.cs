@@ -57,6 +57,7 @@ namespace testsc
         {
             char ESC = '\x1b';  // {ESC}[32m
             output = Regex.Replace(output,"([;<>\\|])", $"{ESC}[36m$1{ESC}[0m");
+            output = Regex.Replace(output, "([│─┌┐└┘┬┴])", $"{ESC}[35m$1{ESC}[0m");
             return output;
         }
     }

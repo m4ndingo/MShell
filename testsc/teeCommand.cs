@@ -18,16 +18,16 @@ namespace testsc
             {
                 ConsoleWrite($"teeCommand: Run(): output file required");
                 return;
-            }                
-            if (filename.Contains("-f"))
-            {
-                filename = filename.Replace("-f", "");
-                force = true;
             }
             if (filename.Contains("-a"))
             {
                 filename = filename.Replace("-a", "");
                 append = true;
+            }
+            if (append || filename.Contains("-f"))
+            {
+                filename = filename.Replace("-f", "");
+                force = true;
             }
             filename = filename.Trim();
             if (File.Exists(filename) && force.Equals(false))

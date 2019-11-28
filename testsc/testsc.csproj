@@ -47,12 +47,14 @@
     <Compile Include="catCommand.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="CoreCommands.cs" />
+    <Compile Include="decodeCommand.cs" />
     <Compile Include="echoCommand.cs" />
     <Compile Include="execCommand.cs" />
     <Compile Include="grepCmd.cs" />
     <Compile Include="helpCommand.cs" />
     <Compile Include="lastCommand.cs" />
     <Compile Include="lsCommand.cs" />
+    <Compile Include="matchCommand.cs" />
     <Compile Include="nlCommand.cs" />
     <Compile Include="npCommand.cs" />
     <Compile Include="Program.cs" />
@@ -61,7 +63,10 @@
     <Compile Include="replaceCommand.cs" />
     <Compile Include="settingCommand.cs" />
     <Compile Include="systemCommand.cs" />
+    <Compile Include="tableCommand.cs" />
     <Compile Include="teeCommand.cs" />
+    <Compile Include="uniqCommand.cs" />
+    <Compile Include="varCommand.cs" />
     <Compile Include="wcCommand.cs" />
   </ItemGroup>
   <ItemGroup>

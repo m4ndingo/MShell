@@ -11,7 +11,8 @@ namespace testsc
 
         // dictionaries
         static public Dictionary<string, string> settings = new Dictionary<string, string>();
-        static public Dictionary<string, string> aliases = new Dictionary<string, string>();        
+        static public Dictionary<string, string> aliases = new Dictionary<string, string>();
+        static public Dictionary<string, string> variables = new Dictionary<string, string>();
 
         // preloaded commands
         static public settingCommand settingsManager = new settingCommand();
@@ -30,34 +31,45 @@ namespace testsc
         {
             if (string.IsNullOrEmpty(prompt_cmds))
                 return;
-            prompt_cmds = EscapeSpecialChars(prompt_cmds);
+            
+            prompt_cmds = TagCommandlineChars(prompt_cmds);
             foreach (string cmd_with_args_and_pipes in prompt_cmds.Split(';'))          // cmd1;cmd2|cmd3
             {
-                bool isPipe = false;
+                //bool isPipe = false;
                 string[] cmd_with_args_pipeables = cmd_with_args_and_pipes.Split('|');
                 silent = cmd_with_args_pipeables.Length > 1;
                 for (int i = 0; i < cmd_with_args_pipeables.Length; i++) 
                 {
-                    string cmd_with_args = UnescapeSpecialChars(cmd_with_args_pipeables[i]);
+                    string cmd_with_args = UntagCommandlineChars(cmd_with_args_pipeables[i]);
                     if (i == cmd_with_args_pipeables.Length - 1) silent = false;
-                    CoreCommand cmd = ParseCmd(cmd_with_args, isPipe);
+                    CoreCommand cmd = ParseCmd(cmd_with_args);
                     if (cmd == null)
                         continue;
                     if (cmd.result_type.Equals(CoreCommand.RESULT_TYPE.COMMANDS))
                     {
-                        ParseTypedCmds((cmd.results + " " + cmd.args).TrimEnd());    // output are more commands 
+                        string new_command = cmd.results;
+                        if (new_command.Contains("{ARGS}"))
+                            new_command = new_command.Replace("{ARGS}", cmd.args);
+                        else
+                            new_command += " " + cmd.args;
+                        last_message = cmd.last_message;
+                        ParseTypedCmds(new_command);    // output are more commands 
                     }
                     else if (cmd.results != null && cmd.result_type.Equals(CoreCommand.RESULT_TYPE.NONE).Equals(false)) 
                     {
                         CoreCommand.ConsoleWrite("Results: '{0}' Type: {1}", cmd.results, cmd.result_type.ToString());
-                    }
-                    isPipe = true;
+                    }                    
                 }
             }
             Core.last_message = "";
-        }        
-
-        static public string EscapeSpecialChars(string commands)
+        }
+        public static string UnescapeArgs(string text)
+        {
+            text = text.Replace("\\n", "\n");
+            text = text.Replace("\\s", " ");
+            return text;
+        }
+        static public string TagCommandlineChars(string commands)
         {
             commands = commands.Replace("\\|", "{PIPE}");
             commands = commands.Replace("\\;", "{SC}");
@@ -65,7 +77,7 @@ namespace testsc
             commands = commands.Replace("\\>", "{GT}");
             return commands;
         }
-        static public string UnescapeSpecialChars(string commands)
+        static public string UntagCommandlineChars(string commands)
         {
             commands = commands.Replace("{PIPE}", "|");
             commands = commands.Replace("{SC}", ";");
@@ -83,7 +95,7 @@ namespace testsc
             return settings.ContainsKey(name) ? settings[name] : def;
         }
 
-        static private CoreCommand ParseCmd(string cmd_with_args, bool isPipe = false)
+        static private CoreCommand ParseCmd(string cmd_with_args)
         {
             KeyValuePair<string, string> kCmd = getCmdArgs(cmd_with_args);
             if (isValidCommand(kCmd.Key).Equals(false))
@@ -97,11 +109,10 @@ namespace testsc
             // prepare context
             cmd.cmd_with_args       = cmd_with_args;
             cmd.cmd_without_args    = kCmd.Key;
-            cmd.args                = kCmd.Value;
-            cmd.isPipe              = isPipe;
+            cmd.args                = kCmd.Value;            
             cmd.last_message        = last_message;
 
-            last_message            = "";           // clear last_write/last_message used between pipes
+            last_message = "";           // clear last_write/last_message used between pipes
 
             // execute command
             cmd.Run();
@@ -117,17 +128,17 @@ namespace testsc
                 LoadCommands();
             return core_commands != null && core_commands.ContainsKey(cmd);
         }
-
         
-        static private void AddNewCommand(string command, CoreCommand helpManager, string props=null)
-        {
-            core_commands.Add(command, helpManager);
-        }
         public static Dictionary<string, CommandProperty> command_properties = new Dictionary<string, Core.CommandProperty>();
-        static private void AddNewCommand(string command, CoreCommand helpManager, CommandProperty properties)
+
+        static private void AddNewCommand(string command, CoreCommand commandManager, CommandProperty properties)
         {
-            core_commands.Add(command, helpManager);
-            RegisterNewProperty(command, properties);
+            bool isSetting = command.Equals("set").Equals(false) && commandManager.Equals(settingsManager);
+            bool isAlias   = commandManager.Equals(aliasManager);
+            CommandProperty prop = (CommandProperty)properties.Clone();
+            prop.is_setting = isSetting;
+            core_commands.Add(command, commandManager);
+            RegisterNewProperty(command, prop);
         }
         static public void RegisterNewProperty(string command, CommandProperty properties)
         { 
@@ -142,9 +153,16 @@ namespace testsc
         }
 
         // properties and configuration for managed command objects
-        public class CommandProperty
-        {
+        public class CommandProperty : ICloneable
+        {                    
             public CoreCommand.INPUT_TYPE input_type { get; set; }
+            public string help { get; set; }
+            public bool is_setting { get; set; }
+            public bool is_alias { get; set; }
+            public object Clone()
+            {
+                return this.MemberwiseClone();
+            }
         }
 
         static private void LoadValidCommands()
@@ -155,24 +173,29 @@ namespace testsc
             CommandProperty isPipe = new CommandProperty() { input_type = CoreCommand.INPUT_TYPE.PIPE };
             CommandProperty isHybrid = new CommandProperty() { input_type = CoreCommand.INPUT_TYPE.HYBRID };
             CommandProperty noParams = new CommandProperty() { input_type = CoreCommand.INPUT_TYPE.NONE };
-            CommandProperty Params = new CommandProperty() { input_type = CoreCommand.INPUT_TYPE.PARAMS };
+            CommandProperty Params = new CommandProperty() { input_type = CoreCommand.INPUT_TYPE.PARAMS };            
 
             AddNewCommand("?", helpManager, Params);
             AddNewCommand("help", helpManager, Params);
             AddNewCommand("ls", new lsCommand(), Params);
             AddNewCommand("cat", new catCommand(), Params);
             AddNewCommand("grep", new grepCommand(), isPipe);
+            AddNewCommand("match", new matchCommand(), isPipe);
             AddNewCommand("replace", new replaceCommand(), isPipe);
             AddNewCommand("alias", aliasManager, isHybrid);
             AddNewCommand("set", settingsManager, Params);
             AddNewCommand("unset", settingsManager, Params);
+            AddNewCommand("var", new varCommand(), isHybrid);
             AddNewCommand("loop", settingsManager, Params);
             AddNewCommand("echo", new echoCommand(), Params);
             AddNewCommand("nl", new nlCommand(), isPipe);
             AddNewCommand("np", new npCommand(), isPipe);
             AddNewCommand("wc", new wcCommand(), isPipe);
             AddNewCommand("tee", new teeCommand(), isPipe);
+            AddNewCommand("uniq", new uniqCommand(), isPipe);
             AddNewCommand("exec", new execCommand(), isPipe);
+            AddNewCommand("decode", new decodeCommand(), isPipe);
+            AddNewCommand("table", new tableCommand(), isPipe);
             AddNewCommand("PS1", settingsManager, Params);
             AddNewCommand("ignorecase", settingsManager, Params);
             AddNewCommand("last", new lastCommand(), noParams);
@@ -186,7 +209,10 @@ namespace testsc
         }
         private static void Load_Alias()
         {
-            aliasManager.AddAlias("q", "loop 0", CoreCommand.INPUT_TYPE.NONE);
+            aliasManager.AddAlias("dbz", "decode b64|decode zlib", CoreCommand.INPUT_TYPE.PIPE, "Decodes base64 then zlib");
+            aliasManager.AddAlias("lls", "ls -l {ARGS} |table", CoreCommand.INPUT_TYPE.NONE, "List files as table");
+            aliasManager.AddAlias("strings", "replace \x00|match [\\x20-\\x7f]{4,}|uniq", CoreCommand.INPUT_TYPE.PIPE, "Extract strings from files");
+            aliasManager.AddAlias("q", "loop 0", CoreCommand.INPUT_TYPE.NONE, "Close shell");
             aliasManager.AddAlias("?", "help");
         }
         static public KeyValuePair<string, string> getCmdArgs(string cmd_with_args)

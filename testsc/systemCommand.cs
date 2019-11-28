@@ -15,6 +15,7 @@ namespace testsc
         {
             KeyValuePair<string, string> kArgs = Core.getCmdArgs(args);
             bool consoleApp = Core.readSetting("consoleapp", "1").Equals("1");
+            
             ProcessWindowStyle windowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             if (consoleApp == false)
                 windowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
@@ -36,8 +37,8 @@ namespace testsc
                 {
                     Task.Factory.StartNew(() =>
                     {
-                        pProcess.Start();
-                        pProcess.WaitForExit();
+                        pProcess.Start();                     
+                        // pProcess.WaitForExit();
                     });
                 }
             }

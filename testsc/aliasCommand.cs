@@ -13,7 +13,7 @@ namespace testsc
             {
                 return "I'm the alias command. Try: alias or alias [name] or alias [newalias] [commands]";
             }
-            return string.Format("Alias '{0}' current value '{1}'", name, Core.aliases[name]);
+            return string.Format("Alias for '{0}'", Core.aliases[name]);
         }
         public override void Run()
         {
@@ -47,7 +47,8 @@ namespace testsc
             {
                 string[] args = line.Split(';');
                 if (args.Length < 2) continue;
-                AddAlias(args[0], args[1]);
+                string commands = string.Join(";", args.Skip(1));
+                AddAlias(args[0], commands);
             }
         }
 
@@ -59,10 +60,10 @@ namespace testsc
             AddAlias(alias, commands);
         }
 
-        public void AddAlias(string name, string commands, INPUT_TYPE input_type = INPUT_TYPE.PARAMS)
+        public void AddAlias(string name, string commands, INPUT_TYPE input_type = INPUT_TYPE.PARAMS, string help = null)
         {
             // save to shared array (static objects share vars)
-            Core.RegisterNewProperty(name, new Core.CommandProperty { input_type = input_type }); 
+            Core.RegisterNewProperty(name, new Core.CommandProperty { input_type = input_type, help = help, is_alias = true });
 
             Core.aliases[name] = commands;                  // save new alias
             Core.core_commands[name] = this;                // this is manager :)

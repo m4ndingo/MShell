@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace testsc
@@ -22,8 +23,17 @@ namespace testsc
             this.PS1 = string.IsNullOrEmpty(newPS1) ? PS1 : newPS1;
             this.core = core;
             enableAnsi();
+            adjustConsoleInputBuffer();
             refreshVars();
         }
+
+        private void adjustConsoleInputBuffer()
+        {
+            byte[] inputBuffer = new byte[65535];
+            Stream inputStream = Console.OpenStandardInput(inputBuffer.Length);
+            Console.SetIn(new StreamReader(inputStream, Console.InputEncoding, false, inputBuffer.Length));
+        }
+
         public IEnumerable<string> doLoop()
         {
             while (this.loop)

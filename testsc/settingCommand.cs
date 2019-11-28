@@ -16,13 +16,14 @@ namespace testsc
             string help = "";
             if (name.Equals("set"))
                 help = string.Format("I'm the settings command. Type \"{0}\" or \"{0} [setting] [value]\" to add a new setting", name);
+            else if (name.Equals("unset"))
+                help = string.Format("Type \"{0} [setting]\" to remove setting", name);
             else
             {
                 if (Core.settings.ContainsKey(name))
                     help += string.Format("Try \"{0} [value]\" to change its value. Current value is \"{1}\"", name, Core.settings[name]);
                 else
-                    help += string.Format("Try \"set {0} [value]\" to set its value", name);
-                help += " (setting)";
+                    help += string.Format("Try \"set {0} [value]\" to set its value", name);                
             }
             return help;
         }
@@ -58,6 +59,9 @@ namespace testsc
             string value = string.Join(" ", args.Skip(1));
             Core.settings[setting] = value;
             Core.core_commands[setting] = Core.settingsManager;
+
+            // save to shared array (static objects share vars)
+            Core.RegisterNewProperty(setting, new Core.CommandProperty { is_setting = true, input_type=CoreCommand.INPUT_TYPE.PARAMS });
         }
         private void RemoveSetting()
         {
@@ -94,9 +98,9 @@ namespace testsc
         }
         public void LoadSettings()
         {
-            Core.settings.Clear();
-            Core.settings.Add("loop", "1");
-            Core.settings.Add("PS1", Core.UnescapeSpecialChars("{GREEN}${DEF} "));
+            //Core.settings.Clear();
+            Core.settings["loop"] = "1";
+            Core.settings["PS1"] = Core.UntagCommandlineChars("{GREEN}${DEF} ");
             //Core.settings.Add("ignorecase", "0");
         }
         private void UpdateSetting(string name, string value)
