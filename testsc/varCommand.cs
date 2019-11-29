@@ -13,9 +13,9 @@ namespace testsc
             if (args.Length > 0 && last_message.Length > 0)
                 Core.variables[args] = last_message;
             else if (Core.variables.ContainsKey(args))
-                ConsoleWrite(Core.variables[args]);
+                ConsoleWrite_Atom(Core.variables[args]);
             else if (args.Length > 0)
-                ConsoleWrite("varCommand: Run(): Variable \"{0}\" not found", args);
+                ConsoleWrite_Atom("varCommand: Run(): Variable \"{0}\" not found", args);
             else
                 DumpVars();
         }
@@ -24,7 +24,7 @@ namespace testsc
             foreach (KeyValuePair<string, string> variable in Core.variables)
             {
                 string[] lines = variable.Value.Split('\n');
-                ConsoleWrite("{0};{1};{2}", variable.Key, lines.Length.ToString(), lines.Length > 1 ? "[list]" : variable.Value);
+                ConsoleWrite("var", "{0};{1};{2}", variable.Key, lines.Length.ToString(), lines.Length > 1 ? "[list]" : variable.Value);
             }
         }
     }

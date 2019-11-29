@@ -10,7 +10,7 @@
         {
             int idx = 0;
             foreach (string line in last_message.Split('\n'))
-                ConsoleWrite("{0};{1}", (idx++).ToString(), line);
+                ConsoleWrite("nl", "{0};{1}", (idx++).ToString(), line);
         }
     }
 }

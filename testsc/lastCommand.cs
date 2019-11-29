@@ -8,7 +8,7 @@
         }
         public override void Run()
         {
-            ConsoleWrite(Core.getLastMessage());
+            ConsoleWrite_Atom(Core.getLastMessage());
         }
     }
 }

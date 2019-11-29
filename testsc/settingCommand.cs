@@ -44,7 +44,7 @@ namespace testsc
             {
                 if (isValidSetting(this.cmd_without_args).Equals(false))
                 {
-                    ConsoleWrite("Run(): settingCommand : CoreCommand - Invalid Setting");
+                    ConsoleWrite_Atom("Run(): settingCommand : CoreCommand - Invalid Setting");
                     return;
                 }
                 UpdateSetting(this.cmd_without_args, this.args);
@@ -67,7 +67,7 @@ namespace testsc
         {
             if(this.args.Length.Equals(0))
             {
-                ConsoleWrite("Removesetting(): settingCommand : setting name is missing");
+                ConsoleWrite_Atom("Removesetting(): settingCommand : setting name is missing");
                 return;
             }
             if (Core.settings.ContainsKey(this.args).Equals(false)) return;
@@ -80,15 +80,15 @@ namespace testsc
             {
                 if (Core.settings.ContainsKey(args).Equals(false))
                 {
-                    ConsoleWrite("DumpSettings(): Setting \"{0}\" not found", args);
+                    ConsoleWrite_Atom("DumpSettings(): Setting \"{0}\" not found", args);
                     return;
                 }
-                ConsoleWrite("{0};{1}", args, Core.EncodeNoAscii(Core.settings[args]));
+                ConsoleWrite_Atom("{0};{1}", args, Core.EncodeNoAscii(Core.settings[args]));
                 return;
             }
             foreach (KeyValuePair<string, string> setting in Core.settings)
             {
-                ConsoleWrite("{0};{1}", setting.Key, Core.EncodeNoAscii(setting.Value));
+                ConsoleWrite("set", "{0};{1}", setting.Key, Core.EncodeNoAscii(setting.Value));
             }
         }
 
@@ -105,7 +105,7 @@ namespace testsc
         {
             if(value.Equals(""))
             {
-                ConsoleWrite(Core.settings[name]);
+                ConsoleWrite_Atom(Core.settings[name]);
                 return;
             }
             Core.settings[name] = value;

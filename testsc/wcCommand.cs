@@ -9,7 +9,7 @@
         public override void Run()
         {
             string filename = this.args;
-            ConsoleWrite(last_message.Split('\n').Length.ToString());
+            ConsoleWrite_Atom(last_message.Split('\n').Length.ToString());
         }
     }
 }

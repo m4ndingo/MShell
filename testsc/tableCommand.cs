@@ -23,7 +23,7 @@ namespace testsc
                 return;
             }
             table.Init(last_message);
-            ConsoleWrite(table.Build());
+            ConsoleWrite_Atom(table.Build());
         }
     }
     class myTable

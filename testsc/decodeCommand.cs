@@ -13,7 +13,7 @@ namespace testsc
         }
         public override void Run()
         {
-            string decode_results = args;
+            string decode_results = args.TrimEnd();
             byte[] decoded_bytes = null;
             using (MemoryStream decompressedFileStream = new MemoryStream())
             {
@@ -34,11 +34,11 @@ namespace testsc
                     }
                 }catch(Exception ex)
                 {
-                    ConsoleWrite("decodeCommand: Run: {0}", ex.Message);
+                    ConsoleWrite_Atom("decodeCommand: Run: {0}", ex.Message);
                 }
             }
             if (decoded_bytes != null)
-                ConsoleWrite(string.Join("", decoded_bytes.Select(b => (char)b).ToArray()));
+                ConsoleWrite_Atom(string.Join("", decoded_bytes.Select(b => (char)b).ToArray()));
         }
     }
 }

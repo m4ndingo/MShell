@@ -16,10 +16,10 @@ namespace testsc
             {
                 byte[] bytes = File.ReadAllBytes(filename);
                 if (bytes.Length > 0)
-                    ConsoleWrite(string.Join("", bytes.Select(b => (char)b)));
+                    ConsoleWrite_Atom(string.Join("", bytes.Select(b => (char)b)));
             }
             else
-                ConsoleWrite($"catCommand: Run(): file \"{filename}\" not found or missing setting \"filename\"");
+                ConsoleWrite_Atom($"catCommand: Run(): file \"{filename}\" not found or missing setting \"filename\"");
         }
     }
 }

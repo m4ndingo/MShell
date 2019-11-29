@@ -30,7 +30,7 @@ namespace testsc
                 if (consoleApp)
                 {
                     pProcess.Start();
-                    ConsoleWrite(pProcess.StandardOutput.ReadToEnd().TrimEnd());    // Output results
+                    ConsoleWrite_Atom(pProcess.StandardOutput.ReadToEnd().TrimEnd());    // Output results
                     pProcess.WaitForExit();
                 }
                 else
@@ -44,7 +44,7 @@ namespace testsc
             }
             catch (Exception ex)
             {
-                ConsoleWrite("systemCommand: {0}", ex.Message);
+                ConsoleWrite_Atom("systemCommand: {0}", ex.Message);
             }
         }
     }

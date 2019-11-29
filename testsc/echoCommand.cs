@@ -10,7 +10,7 @@ namespace testsc
         }
         public override void Run()
         {
-            ConsoleWrite(args);
+            ConsoleWrite_Atom(args);
         }
     }
 }

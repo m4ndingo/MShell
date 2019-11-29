@@ -31,7 +31,7 @@ namespace testsc
                 }
                 else
                 {
-                    ConsoleWrite("Run(): aliasCommand : CoreCommand - Invalid Alias '{0}'", this.cmd_without_args);
+                    ConsoleWrite_Atom("Run(): aliasCommand : CoreCommand - Invalid Alias '{0}'", this.cmd_without_args);
                 }
                 this.result_type = RESULT_TYPE.NONE;
                 return;
@@ -75,17 +75,17 @@ namespace testsc
             {
                 if(Core.aliases.ContainsKey(args).Equals(false))
                 {
-                    ConsoleWrite("DumpAliases(): Alias \"{0}\" not found", args);
+                    ConsoleWrite_Atom("DumpAliases(): Alias \"{0}\" not found", args);
                     return;
                 }
-                ConsoleWrite("{0};{1}", args, Core.EncodeNoAscii(Core.aliases[args]));
+                ConsoleWrite("alias", "{0};{1}", args, Core.EncodeNoAscii(Core.aliases[args]));
                 return;
             }
             foreach (KeyValuePair<string, string> alias in Core.aliases)
             {
                 string value = alias.Value;
                 value = Core.EncodeNoAscii(value);
-                ConsoleWrite("{0};{1}", alias.Key, value);
+                ConsoleWrite("alias", "{0};{1}", alias.Key, value);
             }
             
         }

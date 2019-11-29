@@ -22,7 +22,7 @@ namespace testsc
                 dirname = Path.GetDirectoryName(path + (isFile?"":"\\"));
             }catch(Exception ex)
             {
-                ConsoleWrite("lsCommand: Run(): {0}", ex.Message.ToString());
+                ConsoleWrite_Atom("lsCommand: Run(): {0}", ex.Message.ToString());
                 return;
             }
             string match = Path.GetFileName(path);
@@ -37,7 +37,7 @@ namespace testsc
             }
             catch(Exception ex)
             {
-                ConsoleWrite("lsCommand: Run(): {0}", ex.Message.ToString());
+                ConsoleWrite_Atom("lsCommand: Run(): {0}", ex.Message.ToString());
                 return;
             }
             if (isFile.Equals(false))
@@ -48,11 +48,11 @@ namespace testsc
                     if (extended)
                     {
                         DirectoryInfo info = new DirectoryInfo(dirName);
-                        ConsoleWrite("dir;" + (fileEntries.Length > 0 ? ";" : "") + "{0};{1}", info.CreationTime.ToString(), dirName);
+                        ConsoleWrite("ls", "dir;" + (fileEntries.Length > 0 ? ";" : "") + "{0};{1}", info.CreationTime.ToString(), dirName);
                     }
                     else
                     {
-                        ConsoleWrite(dirName + @"\");
+                        ConsoleWrite("ls", dirName + @"\");
                     }
                 }
             }
@@ -65,10 +65,10 @@ namespace testsc
                 if (extended)
                 {
                     FileInfo info = new FileInfo(baseName);
-                    ConsoleWrite("file;{0};{1};{2}", info.Length.ToString(), info.CreationTime.ToString(), baseName);
+                    ConsoleWrite("ls", "file;{0};{1};{2}", info.Length.ToString(), info.CreationTime.ToString(), baseName);
                 }
                 else
-                    ConsoleWrite(baseName);
+                    ConsoleWrite("ls", baseName);
             }
         }
     }

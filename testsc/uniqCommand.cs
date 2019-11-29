@@ -17,7 +17,7 @@ namespace testsc
 
             string output = string.Join("\n", last_message.Split('\n').Distinct(ignoreCase ? StringComparer.CurrentCultureIgnoreCase : StringComparer.CurrentCulture).ToList());
 
-            ConsoleWrite(output);
+            ConsoleWrite_Atom(output);
         }
     }
 }

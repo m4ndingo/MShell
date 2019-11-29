@@ -18,7 +18,7 @@ namespace testsc
             
             string output = myRegex.Replace(last_message, Core.UnescapeArgs(kArgs.Value));            
 
-            ConsoleWrite(output);
+            ConsoleWrite_Atom(output);
         }
     }
 }

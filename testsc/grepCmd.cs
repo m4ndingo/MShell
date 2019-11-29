@@ -21,10 +21,10 @@ namespace testsc
                     (ignoreCase ? RegexOptions.IgnoreCase : 0) | RegexOptions.Compiled);
                 List<string> resultList = last_message.Split('\n').ToList<string>().Where(line => myRegex.IsMatch(line)).ToList();
 
-                ConsoleWrite(string.Join("\n", resultList));
+                ConsoleWrite_Atom(string.Join("\n", resultList));
             }catch(Exception ex)
             {
-                ConsoleWrite("grepCommand:Run(): {0}", ex.Message);
+                ConsoleWrite_Atom("grepCommand:Run(): {0}", ex.Message);
             }
         }
     }

@@ -25,7 +25,7 @@ namespace testsc
             }
             catch (Exception ex)
             {
-                ConsoleWrite("matchCommand: Run(): {0}", ex.Message);
+                ConsoleWrite_Atom("matchCommand: Run(): {0}", ex.Message);
             }
 
             if (matchRegex == null)
@@ -49,11 +49,11 @@ namespace testsc
                         output = string.Format(kArgs.Value.Replace("\\;", ";"), items);
                     }catch(Exception ex)
                     {
-                        ConsoleWrite("matchCommand: Run(): {0}", ex.Message);
+                        ConsoleWrite_Atom("matchCommand: Run(): {0}", ex.Message);
                         return;
                     }
                 }
-                ConsoleWrite(output);
+                ConsoleWrite("match", output);
             }            
         }
     }

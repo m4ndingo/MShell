@@ -10,10 +10,10 @@ namespace testsc
             {
                 if (Core.isValidCommand(args))
                 {
-                    ConsoleWrite("'{0}' help: {1} {2}", args, Core.core_commands[args].Help(args), Core.core_commands[args].isPipe ? "isPipe: True" : "");
+                    ConsoleWrite_Atom("'{0}' help: {1}", args, Core.core_commands[args].Help(args));
                 }else
                 {
-                    ConsoleWrite("helpCommand: unknown command '{0}'", args);
+                    ConsoleWrite_Atom("helpCommand: unknown command '{0}'", args);
                 }
                 return;
             }
@@ -29,6 +29,7 @@ namespace testsc
                 }
 
                 ConsoleWrite(
+                    "help",
                     "{0,-12}{1,-7}{2,-1}{3,-2}{4}",
                     command.Key,
                     properties != null ? properties.input_type.ToString() : "",

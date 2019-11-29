@@ -29,13 +29,14 @@ namespace testsc
             ParseTypedCmds(prompt_cmds);
         }
 
-        static public string ParseTypedCmds(string prompt_cmds)
+        static public string ParseTypedCmds(string prompt_cmds, bool force_silent = false)
         {
             if (string.IsNullOrEmpty(prompt_cmds))
                 return "";
             
             prompt_cmds = TagCommandlineChars(prompt_cmds);
             string lres = "", last = "";
+            CoreCommand cmd = null;
             foreach (string cmd_with_args_and_pipes in prompt_cmds.Split(';'))          // cmd1;cmd2|cmd3
             {
                 //bool isPipe = false;
@@ -43,9 +44,12 @@ namespace testsc
                 silent = cmd_with_args_pipeables.Length > 1;
                 for (int i = 0; i < cmd_with_args_pipeables.Length; i++) 
                 {
+                    bool isLast = i == cmd_with_args_pipeables.Length - 1;
                     string cmd_with_args = UntagCommandlineChars(cmd_with_args_pipeables[i]);                    
-                    if (i == cmd_with_args_pipeables.Length - 1) silent = false;
-                    CoreCommand cmd = ParseCmd(cmd_with_args, last_message);
+                    if (!force_silent  && isLast) silent = false;
+                    cmd = ParseCmd(cmd_with_args, last_message);
+                    //Console.WriteLine("debug>> cmd '{0}', piping '{1}' bytes, result '{2}' bytes type '{3}",
+                    //    cmd_with_args, last_message.Length, cmd.results.Length, cmd.result_type);
                     if (cmd == null)
                         continue;
                     if (cmd.result_type.Equals(CoreCommand.RESULT_TYPE.COMMANDS)/* || cmd.result_type.Equals(CoreCommand.RESULT_TYPE.NONE)*/)
@@ -54,14 +58,14 @@ namespace testsc
                         if (new_command.Contains("{ARGS}"))
                             new_command = new_command.Replace("{ARGS}", cmd.args);
                         else
-                            new_command += " " + cmd.args;
-                        last_message = cmd.last_message;
-                        lres=ParseTypedCmds(new_command);    // output are more commands 
+                            new_command += " " + cmd.args;                        
+                        lres = ParseTypedCmds(new_command, !isLast && Core.getCommandProperties(cmd_with_args).is_alias);    // output are more commands 
                         last_message = lres;
                     }
                     else if (cmd.results != null && cmd.result_type.Equals(CoreCommand.RESULT_TYPE.NONE).Equals(false)) 
                     {
-                        CoreCommand.ConsoleWrite("Results: '{0}' Type: {1}", cmd.results, cmd.result_type.ToString());
+                        //CoreCommand.ConsoleWrite(last_message);
+                        //CoreCommand.ConsoleWrite("Results: '{0}' Type: {1}", cmd.results, cmd.result_type.ToString());
                     }                    
                 }
                 last = Core.last_message;
@@ -151,6 +155,7 @@ namespace testsc
         {
             text = text.Replace("\\n", "\n");
             text = text.Replace("\\s", " ");
+            text = text.Replace("\\;", ";");
             return text;
         }
 
@@ -194,7 +199,7 @@ namespace testsc
             if (kCmd.Key.Length.Equals(0)) return null;
             if (isValidCommand(kCmd.Key).Equals(false))
             {
-                CoreCommand.ConsoleWrite("command '{0}' not found", kCmd.Key);
+                CoreCommand.ConsoleWrite_Atom("command '{0}' not found", kCmd.Key);
                 last_message_saved = last_message;
                 return null;
             }
@@ -202,13 +207,13 @@ namespace testsc
             CoreCommand cmd = Core.core_commands[kCmd.Key];
             // prepare context
             cmd.results             = pipe_string;
-            cmd.result_type         = CoreCommand.RESULT_TYPE.NONE;
+            //cmd.result_type         = CoreCommand.RESULT_TYPE.NONE;
             cmd.cmd_with_args       = cmd_with_args;
             cmd.cmd_without_args    = kCmd.Key;
             cmd.args                = kCmd.Value;            
             cmd.last_message        = last_message;
 
-            last_message = "";           // clear last_write/last_message used between pipes
+            //last_message = "";           // clear last_write/last_message used between pipes
 
             // execute command
             cmd.Run();

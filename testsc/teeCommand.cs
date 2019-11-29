@@ -16,7 +16,7 @@ namespace testsc
             bool force = false;
             if (filename.Length.Equals(0))
             {
-                ConsoleWrite($"teeCommand: Run(): output file required");
+                ConsoleWrite_Atom($"teeCommand: Run(): output file required");
                 return;
             }
             if (filename.Contains("-a"))
@@ -32,10 +32,10 @@ namespace testsc
             filename = filename.Trim();
             if (File.Exists(filename) && force.Equals(false))
             {
-                ConsoleWrite($"teeCommand: Run(): output file \"{filename}\" exists. Use parameter -f to force");
+                ConsoleWrite_Atom($"teeCommand: Run(): output file \"{filename}\" exists. Use parameter -f to force");
                 return;
             }
-            ConsoleWrite(last_message); // it's tee
+            ConsoleWrite_Atom(last_message); // it's tee
             using (StreamWriter file = new StreamWriter(filename, append))
             {
                 file.Write(last_message);

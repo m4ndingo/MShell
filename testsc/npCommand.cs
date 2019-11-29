@@ -12,7 +12,7 @@ namespace testsc
         }
         public override void Run()
         {
-            ConsoleWrite(SendToNamedPipe(last_message, Core.readSetting("npipe", args)));
+            ConsoleWrite_Atom(SendToNamedPipe(last_message, Core.readSetting("npipe", args)));
         }
 
         private string SendToNamedPipe(string message, string namedpipe_name)
