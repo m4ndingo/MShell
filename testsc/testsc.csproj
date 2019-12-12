@@ -57,11 +57,13 @@
     <Compile Include="matchCommand.cs" />
     <Compile Include="nlCommand.cs" />
     <Compile Include="npCommand.cs" />
+    <Compile Include="peCommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Prompt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="replaceCommand.cs" />
     <Compile Include="settingCommand.cs" />
+    <Compile Include="sortCommand.cs" />
     <Compile Include="systemCommand.cs" />
     <Compile Include="tableCommand.cs" />
     <Compile Include="teeCommand.cs" />

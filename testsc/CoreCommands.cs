@@ -46,6 +46,7 @@ namespace testsc
                 Console.WriteLine(AnsiColorize(output));
             }
             Core.last_message = output; // set last write to last_message
+            last_cmd = null;
         }
         static string last_cmd = null;
         public static void ConsoleWrite(string cmd, string message, params string[] args)

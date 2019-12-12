@@ -15,12 +15,11 @@ namespace testsc
         {
             bool ignoreCase = Core.readSetting("ignorecase", "0").Equals("1");  // set to 0 for case sensitive
 
-            KeyValuePair<string,string> kArgs = Core.getCmdArgs(args);
+            KeyValuePair<string, string> kArgs = Core.getCmdArgs(args);
             string sRegex = kArgs.Key;
             Regex matchRegex = null;
             try
             {
-                
                 matchRegex = new Regex(sRegex, (ignoreCase ? RegexOptions.IgnoreCase : 0) | RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.Singleline);
             }
             catch (Exception ex)
@@ -31,30 +30,35 @@ namespace testsc
             if (matchRegex == null)
                 return;
 
-            MatchCollection match = matchRegex.Matches(last_message);
-            for (int i = 0; i < match.Count; i++)
+            try
             {
-                string output = "";
-                if (kArgs.Value.Equals(""))
-                    output = match[i].Groups[0].ToString();
-                else
+                foreach (string line in last_message.Split('\n'))
                 {
-                    string[] items = new string[match[i].Groups.Count - 1];
-                    for (int n = 1; n < match[i].Groups.Count; n++)
+                MatchCollection match = matchRegex.Matches(line);
+                    for (int i = 0; i < match.Count; i++)
                     {
-                        items[n - 1] = match[i].Groups[n].ToString();
-                    }
-                    try
-                    {
-                        output = string.Format(kArgs.Value.Replace("\\;", ";"), items);
-                    }catch(Exception ex)
-                    {
-                        ConsoleWrite_Atom("matchCommand: Run(): {0}", ex.Message);
-                        return;
+                        string output = "";
+                        if (kArgs.Value.Equals(""))
+                            output = match[i].Groups[0].ToString();
+                        else
+                        {
+                            string[] items = new string[match[i].Groups.Count - 1];
+                            for (int n = 1; n < match[i].Groups.Count; n++)
+                            {
+                                items[n - 1] = match[i].Groups[n].ToString();
+                            }
+                            output = string.Format(kArgs.Value.Replace("\\;", ";"), items);
+                        }
+                        ConsoleWrite("match", output);
                     }
                 }
-                ConsoleWrite("match", output);
-            }            
+            }
+            catch (Exception ex)
+            {
+                ConsoleWrite_Atom("matchCommand: Run(): {0}", ex.Message);
+                return;
+            }
+
         }
     }
 }

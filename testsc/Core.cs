@@ -114,9 +114,11 @@ namespace testsc
             AddNewCommand("wc", new wcCommand(), isPipe);
             AddNewCommand("tee", new teeCommand(), isPipe);
             AddNewCommand("uniq", new uniqCommand(), isPipe);
+            AddNewCommand("sort", new sortCommand(), isPipe);
             AddNewCommand("exec", new execCommand(), isPipe);
             AddNewCommand("decode", new decodeCommand(), isPipe);
             AddNewCommand("table", new tableCommand(), isPipe);
+            AddNewCommand("pe", new peCommand(), isPipe);
             AddNewCommand("PS1", settingsManager, Params);
             AddNewCommand("ignorecase", settingsManager, Params);
             AddNewCommand("last", new lastCommand(), noParams);
@@ -139,7 +141,7 @@ namespace testsc
                                     "ls -l {ARGS} |table", 
                                     Params, "List files as table");
             aliasManager.AddAlias(  "strings",    
-                                    "replace \x00|match [\\x20-\\x7f]{4,}|uniq", 
+                                    "replace \x00|match [\\x20-\\x7f]{4,1024}|uniq", 
                                     CoreCommand.INPUT_TYPE.PIPE, "Extract strings from files");
             aliasManager.AddAlias(  "alog",       
                                     "cat {ARGS}|match (^.+?)\\s-.+?\\[(.+?)\\].+?\"(.+?)\" {0,14}\\;{2}|table|uniq", 
